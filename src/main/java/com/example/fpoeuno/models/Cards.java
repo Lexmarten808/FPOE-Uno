@@ -1,5 +1,5 @@
 package com.example.fpoeuno.models;
-
+//Card's class
 public class Cards {
     String cardImageUrl,cardType,cardColor;
     byte cardNumber;

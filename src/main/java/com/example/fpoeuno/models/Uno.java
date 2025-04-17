@@ -1,15 +1,21 @@
 package com.example.fpoeuno.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
+//this class manages the logic
 public class Uno {
+
+    private Pila mazoPrincipal = new Pila();//pile for the main deck
+    private Pila mazoJugadorHumano = new Pila();//pile for the player's hand
+    private Pila mazoJugadorMaquina = new Pila();//pile for the machine's hand
     private List<Cards> cartas;
 
     public Uno() {
         cartas = new ArrayList<>();
     }
 
+    //this function adds to the "cartas"array all the cards
     public void iniciarCartas() {
         //red cards
         for (int i = 0; i <=9;i++) {
@@ -59,5 +65,21 @@ public class Uno {
             Cards carta=new Cards("2_wild_draw_green.png","draw2","green", (byte) 0);
             cartas.add(carta);}
     }
+    //this generates the main deck
+    private void generarMazoPrincipal() {
+        Collections.shuffle(cartas);
+        for (Cards carta : cartas) {mazoPrincipal.push(carta);}
 
+    }
+    //this function deals the cards to the human's and machine's hand
+    public void repartirCartasIniciales(int cantidadPorJugador) {
+        for (int i = 0; i < cantidadPorJugador; i++) {
+            if (!mazoPrincipal.isEmpty()) {
+                mazoJugadorHumano.push(mazoPrincipal.pop()); // takes from the main deck and deal the card to the human's hand
+            }
+            if (!mazoPrincipal.isEmpty()) {
+                mazoJugadorMaquina.push(mazoPrincipal.pop()); // takes from the main deck and deal the card to the machine's hand
+            }
+        }
+    }
 }
