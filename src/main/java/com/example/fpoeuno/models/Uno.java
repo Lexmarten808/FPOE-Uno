@@ -31,11 +31,15 @@ public class Uno {
             Cards carta=new Cards("2_wild_draw_blue.png","draw2","blue", (byte) 0);
             cartas.add(carta);}
 
+        //+4 wild cards
+        for (int i = 0; i <4;i++) {
+            Cards carta=new Cards("4_wild_card.png","draw4","", (byte) 0);
+            cartas.add(carta);
+        }
         //wild cards
         for (int i = 0; i <4;i++) {
             Cards carta=new Cards("wild.png","wild","", (byte) 0);
-            cartas.add(carta);
-        }
+            cartas.add(carta);}
         //yellow cards
         for (int i = 0; i <=9;i++) {
             Cards carta=new Cards(i+"_yellow.png","number","yellow", (byte) i);
