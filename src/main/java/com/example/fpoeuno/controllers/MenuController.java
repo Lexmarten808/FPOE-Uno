@@ -1,5 +1,7 @@
 package com.example.fpoeuno.controllers;
 import com.example.fpoeuno.models.AlertHelper;
+import com.example.fpoeuno.models.SoundManager;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 
@@ -14,6 +16,13 @@ public class MenuController {
                 "-4. Los comodines pueden jugarse en cualquier momento.\n" +
                 "-5. Presiona el botón UNO antes de jugar tu última carta.\n" +
                 "-6. Si no lo haces, tendrás 2–3 segundos o serás penalizado con una carta.");
+
+    }
+
+    @FXML
+    void onActionSoundButton(ActionEvent event) {
+        if (SoundManager.backgroundMusic!=null) SoundManager.stopMusic();
+        if (SoundManager.backgroundMusic==null) SoundManager.playMusic("musica.wav");
 
     }
 

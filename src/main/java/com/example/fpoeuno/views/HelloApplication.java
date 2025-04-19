@@ -1,5 +1,6 @@
 package com.example.fpoeuno.views;
 
+import com.example.fpoeuno.models.SoundManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,6 +19,7 @@ public class HelloApplication extends Application {
         stage.setTitle("uno");
         stage.setScene(scene);
         stage.show();
+
     }
 
     public static void main(String[] args) {
