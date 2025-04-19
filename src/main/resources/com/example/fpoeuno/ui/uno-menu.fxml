@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.MenuController">
    <style>-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);</style>
    
    <children>
@@ -36,15 +36,15 @@
       </Button>
       <ImageView fitHeight="169.0" fitWidth="214.0" layoutX="204.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/unoLogo.png" />
+            <Image url="@../images/unoLogo.png" />
          </image>
          <effect>
             <DropShadow />
          </effect>
       </ImageView>
-      <ImageView fitHeight="45.0" fitWidth="36.0" layoutX="563.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+      <ImageView fitHeight="45.0" fitWidth="36.0" layoutX="563.0" onMouseClicked="#onActionMouseClicked" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
          <image>
-            <Image url="@images/question-mark.png" />
+            <Image url="@../images/question-mark.png" />
          </image>
          <effect>
             <DropShadow />
@@ -62,7 +62,7 @@
          <graphic>
             <ImageView accessibleRole="BUTTON" fitHeight="32.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/sound.png" />
+                  <Image url="@../images/sound.png" />
                </image>
             </ImageView>
          </graphic>
