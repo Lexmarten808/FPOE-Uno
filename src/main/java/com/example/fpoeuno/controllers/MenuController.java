@@ -8,12 +8,12 @@ public class MenuController {
     @FXML
     void onActionMouseClicked(MouseEvent event) {
 
-        AlertHelper.showInfoAlert("Reglas","Reglas de UNO","- Cada jugador comienza con 12 cartas.\n" +
-                "- La partida inicia con una carta aleatoria en la mesa.\n" +
-                "- Juega una carta que coincida en color o número.\n" +
-                "- Los comodines pueden jugarse en cualquier momento.\n" +
-                "- Presiona el botón UNO antes de jugar tu última carta.\n" +
-                "- Si no lo haces, tendrás 2–3 segundos o serás penalizado con una carta.");
+        AlertHelper.showInfoAlert("Reglas","Reglas de UNO","-1. Cada jugador comienza con 12 cartas.\n" +
+                "-2. La partida inicia con una carta aleatoria en la mesa.\n" +
+                "-3. Juega una carta que coincida en color o número.\n" +
+                "-4. Los comodines pueden jugarse en cualquier momento.\n" +
+                "-5. Presiona el botón UNO antes de jugar tu última carta.\n" +
+                "-6. Si no lo haces, tendrás 2–3 segundos o serás penalizado con una carta.");
 
     }
 
