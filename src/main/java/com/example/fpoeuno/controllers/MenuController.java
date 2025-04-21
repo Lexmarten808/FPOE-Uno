@@ -21,8 +21,8 @@ public class MenuController {
 
     @FXML
     void onActionSoundButton(ActionEvent event) {
-        if (SoundManager.backgroundMusic!=null) SoundManager.stopMusic();
-        if (SoundManager.backgroundMusic==null) SoundManager.playMusic("musica.wav");
+
+        SoundManager.toggleMusic("musica.mp3");
 
     }
 

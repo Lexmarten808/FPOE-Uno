@@ -2,6 +2,7 @@ module com.example.fpoeuno {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires javafx.media;
 
 
     opens com.example.fpoeuno to javafx.fxml;

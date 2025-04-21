@@ -1,53 +1,65 @@
 package com.example.fpoeuno.models;
 
-import javax.sound.sampled.*;
-import java.io.IOException;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import java.net.URL;
 
 public class SoundManager {
-    public static Clip backgroundMusic;
+
+    private static MediaPlayer musicPlayer;
+    private static boolean isMusicPlaying = false;
 
     public static void playEffect(String fileName) {
         try {
             URL soundURL = SoundManager.class.getResource("/com/example/fpoeuno/sounds/" + fileName);
             if (soundURL == null) {
-                System.err.println(" Archivo no encontrado: " + fileName);
+                System.err.println(" Efecto no encontrado: " + fileName);
                 return;
             }
 
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundURL);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
+            Media media = new Media(soundURL.toString());
+            MediaPlayer effectPlayer = new MediaPlayer(media);
+            effectPlayer.play();
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.err.println(" Error al reproducir el sonido: " + fileName);
+            effectPlayer.setOnEndOfMedia(effectPlayer::dispose);
+
+        } catch (Exception e) {
+            System.err.println(" Error al reproducir efecto: " + fileName);
             e.printStackTrace();
         }
     }
-    public static void playMusic(String fileName) {
-        try {
-            URL musicURL = SoundManager.class.getResource("/com/example/fpoeuno/music/" + fileName);
 
-            if (musicURL != null) {
-                AudioInputStream audioStream = AudioSystem.getAudioInputStream(musicURL);
-                backgroundMusic = AudioSystem.getClip();
-                backgroundMusic.open(audioStream);
-                backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);  // Repetir indefinidamente
-                backgroundMusic.start();
-            } else {
-                System.err.println(" Música no encontrada: " + fileName);
+    public static void toggleMusic(String fileName) {
+        try {
+            if (musicPlayer != null && isMusicPlaying) {
+                musicPlayer.stop();
+                isMusicPlaying = false;
+                return;
             }
 
+            URL musicURL = SoundManager.class.getResource("/com/example/fpoeuno/music/" + fileName);
+            if (musicURL == null) {
+                System.err.println(" Música no encontrada: " + fileName);
+                return;
+            }
+
+            Media media = new Media(musicURL.toString());
+            musicPlayer = new MediaPlayer(media);
+            musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            musicPlayer.play();
+            isMusicPlaying = true;
+
         } catch (Exception e) {
-            System.err.println(" Error al reproducir música: " + e.getMessage());
+            System.err.println(" Error al manejar música: " + fileName);
+            e.printStackTrace();
         }
     }
 
     public static void stopMusic() {
-        if (backgroundMusic != null && backgroundMusic.isRunning()) {
-            backgroundMusic.stop();
-            backgroundMusic.close();
+        if (musicPlayer != null) {
+            musicPlayer.stop();
+            isMusicPlaying = false;
         }
     }
 }
