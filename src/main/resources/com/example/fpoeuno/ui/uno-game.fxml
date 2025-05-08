@@ -16,12 +16,11 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-image: /C:/Users/brand/Downloads/fondo.png;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-image: url('@../images/icons/background.png');" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.GameController">
    <children>
       <ImageView cache="true" fitHeight="400.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/iconos/fondo.png" />
+            <Image url="@../images/icons/background.png" />
          </image>
          <viewport>
             <Rectangle2D />
@@ -37,7 +36,7 @@
       </ImageView>
       <ImageView depthTest="ENABLE" fitHeight="106.0" fitWidth="69.0" layoutX="1.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" x="38.0" y="330.0" AnchorPane.bottomAnchor="1.633941650390625">
          <image>
-            <Image url="@../images/iconos/jugador.png" />
+            <Image url="@../images/icons/player.png" />
          </image>
          <viewport>
             <Rectangle2D />
@@ -48,11 +47,11 @@
             <Image url="@../images/cards-uno/card_uno.png" />
          </image>
       </ImageView>
-      <Label fx:id="playerCards" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="368.0" prefHeight="42.0" prefWidth="34.0" text="00" textFill="WHITE" AnchorPane.bottomAnchor="-10.0" />
+      <Label fx:id="humanCards" alignment="CENTER" contentDisplay="CENTER" layoutX="114.0" layoutY="368.0" prefHeight="42.0" prefWidth="34.0" text="00" textFill="WHITE" AnchorPane.bottomAnchor="-10.0" />
       <Circle fill="#27039e" layoutX="448.0" layoutY="80.0" radius="35.0" stroke="BLACK" strokeType="INSIDE" AnchorPane.rightAnchor="117.0" AnchorPane.topAnchor="45.0" />
       <ImageView fitHeight="69.0" fitWidth="62.0" layoutX="410.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="121.0" AnchorPane.topAnchor="51.0">
          <image>
-            <Image url="@../images/iconos/maquina.png" />
+            <Image url="@../images/icons/machine.png" />
          </image>
       </ImageView>
       <ImageView fitHeight="51.0" fitWidth="34.0" layoutX="479.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true" translateX="6.0" AnchorPane.rightAnchor="87.0" AnchorPane.topAnchor="59.0">
@@ -60,7 +59,7 @@
             <Image url="@../images/cards-uno/card_uno.png" />
          </image>
       </ImageView>
-      <Label fx:id="machineCards" alignment="CENTER" contentDisplay="CENTER" layoutX="487.0" layoutY="83.0" prefHeight="34.0" prefWidth="34.0" text="00" textFill="WHITE" translateX="6.0" AnchorPane.rightAnchor="78.60000000000002" AnchorPane.topAnchor="83.0" />
+      <Label fx:id="iaCards" alignment="CENTER" contentDisplay="CENTER" layoutX="487.0" layoutY="83.0" prefHeight="34.0" prefWidth="34.0" text="00" textFill="WHITE" translateX="6.0" AnchorPane.rightAnchor="78.60000000000002" AnchorPane.topAnchor="83.0" />
       <Rectangle arcHeight="5.0" arcWidth="5.0" height="27.0" layoutX="37.0" layoutY="301.0" strokeType="INSIDE" width="92.0" AnchorPane.bottomAnchor="72.0">
          <effect>
             <Bloom />
@@ -98,7 +97,7 @@
             </LinearGradient>
          </stroke>
       </Rectangle>
-      <Label fx:id="playerName" alignment="CENTER" layoutX="37.0" layoutY="301.0" prefHeight="27.0" prefWidth="83.0" style="-fx-border-radius: 300;" text="nickname" textFill="WHITE" AnchorPane.bottomAnchor="71.8">
+      <Label fx:id="humanName" alignment="CENTER" layoutX="37.0" layoutY="301.0" prefHeight="27.0" prefWidth="83.0" style="-fx-border-radius: 300;" text="nickname" textFill="WHITE" AnchorPane.bottomAnchor="71.8">
          <font>
             <Font name="Britannic Bold" size="12.0" />
          </font>
@@ -148,11 +147,11 @@
             <DropShadow />
          </effect>
       </Label>
-      <Button layoutY="370.0" mnemonicParsing="false" onAction="#OnActionSoundButton" prefHeight="27.0" prefWidth="34.0" style="-fx-background-radius: 200;" AnchorPane.bottomAnchor="-0.3999999999999986" AnchorPane.leftAnchor="0.0">
+      <Button layoutY="370.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="27.0" prefWidth="34.0" style="-fx-background-radius: 200;" AnchorPane.bottomAnchor="-0.3999999999999986" AnchorPane.leftAnchor="0.0">
          <graphic>
             <ImageView fitHeight="25.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                <image>
-                  <Image url="@../images/iconos/sound.png" />
+                  <Image url="@../images/icons/sound.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />

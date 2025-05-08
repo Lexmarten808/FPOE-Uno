@@ -26,7 +26,7 @@
             <DropShadow />
          </effect>
       </TextField>
-      <Button contentDisplay="CENTER" layoutX="273.0" layoutY="332.0" mnemonicParsing="false" onAction="#OnActionIniciarButton" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-cursor: hand;" text="INICIAR" textFill="WHITE">
+      <Button contentDisplay="CENTER" layoutX="273.0" layoutY="332.0" mnemonicParsing="false" onAction="#onActionButtonIniciar" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-cursor: hand;" text="INICIAR" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -36,7 +36,7 @@
       </Button>
       <ImageView fitHeight="169.0" fitWidth="214.0" layoutX="204.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../images/iconos/unoLogo.png" />
+            <Image url="@../images/icons/uno-logo.png" />
          </image>
          <effect>
             <DropShadow />
@@ -44,7 +44,7 @@
       </ImageView>
       <ImageView fitHeight="45.0" fitWidth="36.0" layoutX="563.0" onMouseClicked="#onActionMouseClickedQuestionMark" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
          <image>
-            <Image url="@../images/iconos/question-mark.png" />
+            <Image url="@../images/icons/question-mark.png" />
          </image>
          <effect>
             <DropShadow />
@@ -58,11 +58,11 @@
             <DropShadow />
          </effect>
       </Label>
-      <Button layoutX="14.0" layoutY="362.0" mnemonicParsing="false" onAction="#onActionSoundButton" prefHeight="22.0" prefWidth="26.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
+      <Button layoutX="14.0" layoutY="362.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="22.0" prefWidth="26.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
          <graphic>
             <ImageView accessibleRole="BUTTON" fitHeight="32.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../images/iconos/sound.png" />
+                  <Image url="@../images/icons/sound.png" />
                </image>
             </ImageView>
          </graphic>
