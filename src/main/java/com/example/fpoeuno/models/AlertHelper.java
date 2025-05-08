@@ -4,22 +4,27 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Region;
+
 import java.util.Optional;
 
 /**
  * Utility class responsible for displaying different types of alerts
  * (confirmation, information, error, and warning) in the user interface.
- *  @author Brandon Lasprilla Aristizabal
- *  @author Juan Miguel Manjarrez Zuluaga
+ * <p>
+ *     This class centralizes alert dialogs for consistent UI messaging.
+ * </p>
+ *
+ * @author Brandon Lasprilla Aristizabal
+ * @author Juan Miguel Manjarrez Zuluaga
  */
 public class AlertHelper {
 
     /**
      * Displays a confirmation alert with "Iniciar" and "Cancelar" buttons.
      *
-     * @param title   The title of the alert.
-     * @param message The message displayed in the alert body.
-     * return {@code true} if the user clicks "Iniciar", {@code false} otherwise.
+     * @param title   the title of the alert window
+     * @param message the message shown in the alert content
+     * return {@code true} if the user clicks "Iniciar", {@code false} otherwise
      */
     public static boolean showConfirmationAlert(String title, String message) {
         // Custom buttons
@@ -36,11 +41,11 @@ public class AlertHelper {
     }
 
     /**
-     * Displays an informational alert.
+     * Displays an informational alert with a custom header and message.
      *
-     * @param title   The title of the alert.
-     * @param header  The header text of the alert.
-     * @param message The message displayed in the alert body.
+     * @param title   the title of the alert window
+     * @param header  the header text of the alert
+     * @param message the message shown in the alert content
      */
     public static void showInfoAlert(String title,String header, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -56,11 +61,11 @@ public class AlertHelper {
     }
 
     /**
-     * Displays an error alert.
+     * Displays an error alert with a custom header and message.
      *
-     * @param title   The title of the alert.
-     * @param header  The header text of the alert.
-     * @param message The message displayed in the alert body.
+     * @param title   the title of the alert window
+     * @param header  the header text of the alert
+     * @param message the message displayed in the alert content
      */
     public static void showErrorAlert(String title,String header, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -71,10 +76,10 @@ public class AlertHelper {
     }
 
     /**
-     * Displays a warning alert.
+     * Displays a warning alert with a message and no header.
      *
-     * @param title   The title of the alert.
-     * @param message The message displayed in the alert body.
+     * @param title   the title of the alert window
+     * @param message the message displayed in the alert content
      */
     public static void showWarningAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
