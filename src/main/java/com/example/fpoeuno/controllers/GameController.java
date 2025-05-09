@@ -6,6 +6,7 @@ import com.example.fpoeuno.models.Player;
 import com.example.fpoeuno.models.SoundManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +21,9 @@ import java.util.List;
  * displaying the player's name, handling sound toggle actions, and initializing the game.
  */
 public class GameController {
+//declaration of the id of the top card in the table
+    @FXML
+    private ImageView topCard;
 
     private Player humanPlayer;
 
@@ -60,14 +64,28 @@ public class GameController {
      * and starting the game.
      */
     public void initialize() {
+        //note this must have an ioExeption in case the string humanName is null
+        //otherwise it would throw an error
+
         // This runs when the view is loaded
         game = new Game(); // Initialize the game instance
+
+        //declaration of a Card objet named fisrtCard that contains the first card in the table
+        Card firstCard = game.getDeck().getTopDiscard();
+
+        /*if the firstCard is not null and the topCart either
+        the image is loaded in the image view labeled as "topCard"*/
+        if (firstCard != null && topCard != null) {
+            String imagePath = "/com/example/fpoeuno/" + firstCard.getImageUrl(); // Asegúrate que esto devuelva algo como "images/cards-uno/1_red.png"
+            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+            topCard.setImage(image);
+        }
 
         // Set spacing between cards in the player's hand
         playerHandBox.setSpacing(5); // Set spacing to 5px
 
         // Mostrar la mano inicial
-        // showPlayerHand(game.getHuman().getHand());
+         showPlayerHand(game.getHuman().getHand());
 
         // Start the game and display the first card
         game.startGame(); // This will update the discard pile
@@ -76,7 +94,7 @@ public class GameController {
         game.getDeck().printDiscardPile();
     }
 
-    /*
+
     public void showPlayerHand(List<Card> hand) {
         playerHandBox.getChildren().clear(); // Limpiar antes de actualizar
 
@@ -90,6 +108,11 @@ public class GameController {
             imageView.setFitWidth(58); // Ajusta el tamaño si quieres
             imageView.setPreserveRatio(true);
 
+            /*this sets the cursor image as Hand
+            when the cursor is over the image*/
+            imageView.setCursor(Cursor.HAND);
+
+
             // Establecer la posición X de la carta
             imageView.setLayoutX(xOffset);
 
@@ -101,7 +124,7 @@ public class GameController {
         }
     }
 
-     */
+
 
     /**
      * Sets the name of the player on the user interface.
@@ -120,6 +143,7 @@ public class GameController {
     void onActionButtonSound(ActionEvent event) {
         // Toggle background music
         SoundManager.toggleMusic("music.mp3");
+
     }
 
 }
