@@ -1,6 +1,7 @@
 package com.example.fpoeuno.controllers;
 
 import com.example.fpoeuno.models.AlertHelper;
+
 import com.example.fpoeuno.models.SoundManager;
 import com.example.fpoeuno.views.UnoApplication;
 import javafx.event.ActionEvent;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -18,6 +20,10 @@ import java.io.IOException;
  * Handles interactions such as starting the game, toggling sound, and showing game rules.
  */
 public class MenuController {
+
+
+    @FXML
+    private TextField nickname;
 
     /**
      * Displays an informational alert dialog with the rules of UNO
@@ -57,9 +63,18 @@ public class MenuController {
      */
     @FXML
     void onActionButtonIniciar(ActionEvent event) {
+
         try {
             FXMLLoader loader = new FXMLLoader(UnoApplication.class.getResource("/com/example/fpoeuno/ui/uno-game.fxml"));
             Scene scene = new Scene(loader.load());
+            // Acceder al controlador del juego
+            GameController gameController = loader.getController();
+
+            // Pasar el nickname al controlador del juego
+            gameController.setPlayerName(nickname.getText());
+
+
+
 
             Stage stage = new Stage();
             stage.setTitle("UNO Game");

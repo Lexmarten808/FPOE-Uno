@@ -1,5 +1,7 @@
 package com.example.fpoeuno.models;
 
+import java.util.List;
+
 /**
  * Manages the game state, including players, the deck, and initial setup.
  * Handles the flow of a basic UNO game between a human and the machine.
@@ -38,7 +40,7 @@ public class Game {
      * Sets up the initial state of the game.
      * Places the first card on the discard pile and sets the current player.
      */
-    private void startGame() {
+    public void startGame() {
         Card firstCard = deck.drawCard();
         deck.discard(firstCard);
         System.out.println("First card on the table: " + firstCard);
@@ -61,22 +63,30 @@ public class Game {
         machine.printHand();
     }
 
-    /** @return the current game deck (useful for controllers or testing) */
+    /**
+     * @return the current game deck (useful for controllers or testing)
+     */
     public Deck getDeck() {
         return deck;
     }
 
-    /** @return the player whose turn it is */
+    /**
+     * @return the player whose turn it is
+     */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    /** @return the human player */
+    /**
+     * @return the human player
+     */
     public Player getHuman() {
         return human;
     }
 
-    /** @return the machine player */
+    /**
+     * @return the machine player
+     */
     public Player getMachine() {
         return machine;
     }
@@ -93,5 +103,7 @@ public class Game {
         deck.printDrawPile();
         deck.printDiscardPile();
     }
+
+
 
 }

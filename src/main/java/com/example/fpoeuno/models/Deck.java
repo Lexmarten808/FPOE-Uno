@@ -35,7 +35,7 @@ public class Deck {
      */
     public void initializeDeck() {
         String[] colors = {"blue", "green", "red", "yellow"};
-        String basePath = "images/cards-uno/";
+        String basePath = "/images/cards-uno/";
 
         for (String color : colors) {
             // Add number cards 0 to 9 (1 of each per color)
