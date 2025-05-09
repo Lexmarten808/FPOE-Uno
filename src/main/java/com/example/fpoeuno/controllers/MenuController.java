@@ -2,12 +2,11 @@ package com.example.fpoeuno.controllers;
 
 import com.example.fpoeuno.models.AlertHelper;
 import com.example.fpoeuno.models.SoundManager;
-import com.example.fpoeuno.views.HelloApplication;
+import com.example.fpoeuno.views.UnoApplication;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -59,7 +58,7 @@ public class MenuController {
     @FXML
     void onActionButtonIniciar(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource("/com/example/fpoeuno/ui/uno-game.fxml"));
+            FXMLLoader loader = new FXMLLoader(UnoApplication.class.getResource("/com/example/fpoeuno/ui/uno-game.fxml"));
             Scene scene = new Scene(loader.load());
 
             Stage stage = new Stage();
