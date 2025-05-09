@@ -1,5 +1,7 @@
 package com.example.fpoeuno.models;
 
+import com.example.fpoeuno.controllers.GameController;
+
 import java.util.List;
 
 /**
@@ -41,8 +43,12 @@ public class Game {
      * Places the first card on the discard pile and sets the current player.
      */
     public void startGame() {
+        // Sacamos la primera carta del mazo
         Card firstCard = deck.drawCard();
+
+        // Descartamos la carta en la pila de descarte
         deck.discard(firstCard);
+
         System.out.println("First card on the table: " + firstCard);
 
         // Human starts the game
@@ -103,7 +109,5 @@ public class Game {
         deck.printDrawPile();
         deck.printDiscardPile();
     }
-
-
 
 }

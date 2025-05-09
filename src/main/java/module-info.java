@@ -11,4 +11,5 @@ module com.example.fpoeuno {
     opens com.example.fpoeuno.controllers to javafx.fxml;
     exports com.example.fpoeuno.views;
     opens com.example.fpoeuno.views to javafx.fxml;
+    exports com.example.fpoeuno;
 }

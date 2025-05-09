@@ -35,7 +35,7 @@ public class Deck {
      */
     public void initializeDeck() {
         String[] colors = {"blue", "green", "red", "yellow"};
-        String basePath = "/images/cards-uno/";
+        String basePath = "images/cards-uno/";
 
         for (String color : colors) {
             // Add number cards 0 to 9 (1 of each per color)
@@ -52,7 +52,7 @@ public class Deck {
 
             // Add one skip card per color
             String skipFile = "skip_" + color + ".png";
-            drawPile.add(new Card(basePath + skipFile, "skip", color, (byte) -1));
+            drawPile.push(new Card(basePath + skipFile, "skip", color, (byte) -1));
         }
 
         // Add four +4 wild draw cards
@@ -131,9 +131,9 @@ public class Deck {
      * Useful for debugging or game tracking.
      */
     public void printDrawPile() {
-        System.out.println("Draw Pile:");
+        System.out.println("Draw Pile (" + drawPile.size() + " cards):");
         for (Card card : drawPile) {
-            System.out.println(" " + card);
+            System.out.println("  " + card);
         }
     }
 
@@ -142,9 +142,9 @@ public class Deck {
      * Useful for debugging or game tracking.
      */
     public void printDiscardPile() {
-        System.out.println("Discard Pile:");
+        System.out.println("Discard Pile (" + discardPile.size() + " cards):");
         for (Card card : discardPile) {
-            System.out.println(" " + card);
+            System.out.println("  " + card);
         }
     }
 
