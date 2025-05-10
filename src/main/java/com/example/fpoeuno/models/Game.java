@@ -43,6 +43,40 @@ public class Game {
         }
     }
 
+    public boolean canPlayCard(Card cardToPlay, Card topCard) {
+        return cardToPlay.getColor() == topCard.getColor() ||
+                cardToPlay.getValue() == topCard.getValue() ||
+                cardToPlay.getColor() == CardColor.WILD;
+    }
+
+    public void playCard(Player player, Card card) {
+        if (canPlayCard(card, topCard)) {
+            player.getHand().remove(card); // Juega la carta
+            topCard = card; // Actualizamos la carta superior
+            deck.discard(card); // Descarta la carta del mazo
+
+            // Si la carta es un comodín, ejecutamos su efecto
+            if (card.getType() == CardType.WILD || card.getType() == CardType.WILD_DRAW_FOUR) {
+                handleWildCardEffect();
+            }
+
+            // Cambiar el turno al siguiente jugador
+            nextTurn();
+            
+        } else {
+            System.out.println("You can't play that card! Try again.");
+        }
+    }
+
+    public void nextTurn() {
+        // Cambia el turno entre el jugador humano y la máquina
+        if (currentPlayer == human) {
+            currentPlayer = machine;
+        } else {
+            currentPlayer = human;
+        }
+    }
+
     public void playTurn() {
         System.out.println(currentPlayer.getName() + "'s turn:");
         currentPlayer.printPlayerInfo();
@@ -57,6 +91,8 @@ public class Game {
         // Cambiar de turno
         currentPlayer = (currentPlayer == human) ? machine : human;
     }
+
+
 
     private void playHumanTurn() {
         Scanner scanner = new Scanner(System.in);

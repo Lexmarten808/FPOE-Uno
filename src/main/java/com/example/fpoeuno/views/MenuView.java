@@ -7,19 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * Class representing the main menu window of the UNO game.
- * This class extends {@link javafx.stage.Stage} and is responsible for loading the main menu interface from an FXML file,
- * setting the scene, the application icon, and controlling background music.
- */
 public class MenuView extends Stage {
 
-    /**
-     * Constructor that loads the main menu interface and sets up the menu window.
-     * It also initializes the background music.
-     *
-     * @throws IOException if an error occurs while loading the FXML file or the icon image.
-     */
     public MenuView() throws IOException {
         // Load the main menu interface from the FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
@@ -39,12 +28,6 @@ public class MenuView extends Stage {
         show();
     }
 
-    /**
-     * Static method implementing the Singleton pattern to ensure there is only one instance of {@link MenuView}.
-     *
-     * @return the unique instance of {@link MenuView}.
-     * @throws IOException if an error occurs while creating the instance.
-     */
     public static MenuView getInstance() throws IOException {
         if (MenuStageHolder.INSTANCE == null) {
             return MenuStageHolder.INSTANCE = new MenuView();
@@ -53,10 +36,6 @@ public class MenuView extends Stage {
         }
     }
 
-    /**
-     * Helper static class that holds the unique instance of {@link MenuView}.
-     * This is used to efficiently implement the Singleton pattern.
-     */
     private static class MenuStageHolder {
         private static MenuView INSTANCE;
     }

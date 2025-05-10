@@ -42,7 +42,7 @@
             <Image url="@images/icons/uno-logo.png" />
          </image>
       </ImageView>
-      <Button layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="22.0" prefWidth="26.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
+      <Button layoutX="847.0" layoutY="21.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="22.0" prefWidth="26.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
          <graphic>
             <ImageView accessibleRole="BUTTON" fitHeight="32.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -54,7 +54,7 @@
             <DropShadow />
          </effect>
       </Button>
-      <Button graphicTextGap="0.0" layoutX="789.0" layoutY="17.0" mnemonicParsing="false" onAction="#onActionButtonHelp" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-padding: 2 10 2 5; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);" text="Ayuda" textFill="WHITE">
+      <Button graphicTextGap="0.0" layoutX="21.0" layoutY="18.0" mnemonicParsing="false" onAction="#onActionButtonHelp" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-padding: 2 10 2 5; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);" text="Ayuda" textFill="WHITE">
          <graphic>
             <ImageView fitHeight="30.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
                <image>

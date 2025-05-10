@@ -15,12 +15,16 @@ import javafx.scene.layout.Pane;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Controller class for the main game view.
- * This class manages user interactions related to the game, including
- * displaying the player's name, handling sound toggle actions, and initializing the game.
- */
 public class GameController {
+
+    private Game game;
+    private Player humanPlayer;
+
+    @FXML
+    private ImageView playerTurnFlag;
+
+    @FXML
+    private ImageView machineTurnFlag;
 
     @FXML
     private ImageView topCard;
@@ -32,31 +36,37 @@ public class GameController {
     private Pane machineHandPane;
 
     @FXML
-    private ImageView topCardImageView;
-
-    @FXML
     private Label humanName;
 
-    /**
-     * Handles the sound toggle button click event.
-     * It toggles background music on or off based on its current state.
-     *
-     * @param event the ActionEvent triggered by the button click
-     */
-    @FXML
-    void onActionButtonSound(ActionEvent event) {
-        // Toggle background music
-        SoundManager.toggleMusic("music.mp3");
+    public void setGame(Game game) {
+        this.game = game;
+        this.humanPlayer = game.getHuman();
 
+        // Mostrar la carta superior del mazo
+        Card firstCard = game.getDeck().getTopDiscard();
+        if (firstCard != null && topCard != null) {
+            String imagePath = "/com/example/fpoeuno/" + firstCard.getImageUrl();
+            Image image = new Image(Objects.requireNonNull(getClass().getResource(imagePath)).toExternalForm());
+            topCard.setImage(image);
+            topCard.setFitHeight(90);
+            topCard.setFitWidth(58);
+            topCard.setPreserveRatio(true);
+        }
+
+        // Mostrar manos y nombre
+        showPlayerHand(humanPlayer.getHand());
+        showMachineHand(game.getMachine().getHand());
+        setPlayerName(humanPlayer.getName());
+
+        game.printGameInfo();
     }
 
-    private Player humanPlayer;
+    public void setPlayerName(String name) {
+        if (humanName != null) {
+            humanName.setText(name);
+        }
+    }
 
-    /**
-     * Sets the player for the game and updates the player's name on the interface.
-     *
-     * @param humanPlayer the Player object representing the current player.
-     */
     public void setPlayer(Player humanPlayer) {
         this.humanPlayer = humanPlayer;
         if (humanName != null) {
@@ -66,93 +76,112 @@ public class GameController {
         }
     }
 
-    /**
-     * Initializes the player's hand view by updating the layout with the player's cards,
-     * setting up the images, and adjusting their position within the game interface.
-     *
-     * @param hand a list of Card objects representing the player's current hand.
-     */
     public void showPlayerHand(List<Card> hand) {
-        // Clear the current hand before updating
-        playerHandPane.getChildren().clear();
+        // No borrar todas las cartas, solo las que deben actualizarse
+        double xOffset = 0;
 
-        double xOffset = 0; // X-axis offset initializes to 0
+        // Obtener la carta superior del mazo
+        Card top = game.getDeck().getTopDiscard();
 
-        // Iterate over the cards in the player's hand
+        // Iterar sobre las cartas de la mano y actualizarlas
         for (Card card : hand) {
-            // Load the card's image
-            Image image = new Image(Objects.requireNonNull(getClass().getResource("/com/example/fpoeuno/" + card.getImageUrl())).toExternalForm());
+            Image image = new Image(Objects.requireNonNull(getClass().getResource(
+                    "/com/example/fpoeuno/" + card.getImageUrl())).toExternalForm());
             ImageView imageView = new ImageView(image);
-
-            // Adjust the size of the card
             imageView.setFitHeight(90);
             imageView.setFitWidth(58);
             imageView.setPreserveRatio(true);
+            imageView.setCursor(Cursor.HAND);
+            imageView.setLayoutX(xOffset);
+            imageView.setLayoutY(0);
 
-            imageView.setCursor(Cursor.HAND); // Change the cursor to a hand when hovering the card
-            imageView.setLayoutX(xOffset); // Set the card's X position in the Pane
-            imageView.setLayoutY(0); // Set the card's Y position
+            // Evento de clic en la carta
+            imageView.setOnMouseClicked(event -> {
+                if (game.canPlayCard(card, top)) {
+                    game.playCard(humanPlayer, card);  // Jugar la carta
 
-            playerHandPane.getChildren().add(imageView); // Add the card to the Pane
+                    // Actualizar la imagen de la carta superior
+                    Image newTopImage = new Image(Objects.requireNonNull(getClass().getResource(
+                            "/com/example/fpoeuno/" + card.getImageUrl())).toExternalForm());
+                    topCard.setImage(newTopImage);
 
-            xOffset += 63; // Increase de X-axis offset for the next card
+                    // Eliminar la carta jugada de la mano del jugador
+                    humanPlayer.getHand().remove(card);
+
+                    // No es necesario redibujar toda la mano, solo actualizar la vista
+                    // Actualizamos solo la vista sin borrar todas las cartas
+                    updatePlayerHand();
+                } else {
+                    System.out.println("Can't play card");
+                }
+            });
+
+            // Añadir la carta a la mano visual
+            playerHandPane.getChildren().add(imageView);
+            xOffset += 63;  // Mantener el espaciado entre las cartas
+        }
+    }
+
+    private void updatePlayerHand() {
+        // Esta función actualiza la visualización de las cartas en mano
+        playerHandPane.getChildren().clear();  // Limpiar la vista anterior
+
+        double xOffset = 0;
+        for (Card card : humanPlayer.getHand()) {
+            Image image = new Image(Objects.requireNonNull(getClass().getResource(
+                    "/com/example/fpoeuno/" + card.getImageUrl())).toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(90);
+            imageView.setFitWidth(58);
+            imageView.setPreserveRatio(true);
+            imageView.setCursor(Cursor.HAND);
+            imageView.setLayoutX(xOffset);
+            imageView.setLayoutY(0);
+
+            // Añadir el evento de clic
+            imageView.setOnMouseClicked(event -> {
+                if (game.canPlayCard(card, game.getDeck().getTopDiscard())) {
+                    game.playCard(humanPlayer, card);
+                    updatePlayerHand();  // Actualiza la mano después de jugar una carta
+                }
+            });
+
+            // Añadir la carta a la mano visual
+            playerHandPane.getChildren().add(imageView);
+            xOffset += 63;  // Espacio entre cartas
         }
     }
 
     public void showMachineHand(List<Card> hand) {
-        machineHandPane.getChildren().clear();
+        machineHandPane.getChildren().clear();  // Limpiar la mano de la máquina
 
-        double cardSpacing = 63; // Espacio entre cartas
-        double cardWidth = 58;   // Ancho de cada carta
-        double targetX = 685;    // Posición X deseada para la última carta
-        double targetY = 55;     // Posición Y deseada
+        double xOffset = 0;  // Desplazamiento inicial de las cartas
 
-        double startX = targetX - (hand.size() - 1) * cardSpacing;
+        // Cargar la imagen de la parte trasera de la carta
+        Image backImage = new Image(Objects.requireNonNull(getClass().getResource(
+                "/com/example/fpoeuno/images/cards-uno/card_uno.png")).toExternalForm());
 
-        Image image = new Image(Objects.requireNonNull(getClass().getResource("/com/example/fpoeuno/images/cards-uno/card_uno.png")).toExternalForm());
+        for (Card card : hand) {
+            ImageView imageView = new ImageView(backImage);  // Usar la imagen de la parte trasera
 
-        for (int i = 0; i < hand.size(); i++) {
-            ImageView imageView = new ImageView(image);
-            imageView.setFitHeight(90);
-            imageView.setFitWidth(cardWidth);
+            imageView.setFitHeight(90);  // Ajustar el tamaño de la carta
+            imageView.setFitWidth(58);
             imageView.setPreserveRatio(true);
-            imageView.setCursor(Cursor.HAND);
 
-            double x = startX + i * cardSpacing;
-            imageView.setLayoutX(x);
-            imageView.setLayoutY(targetY);
+            // Configurar la posición de la carta
+            imageView.setLayoutX(xOffset);
+            imageView.setLayoutY(0);  // Mantener en la misma posición vertical
 
+            // Agregar la carta a la mano de la máquina
             machineHandPane.getChildren().add(imageView);
+
+            xOffset += 30;  // Ajustar el desplazamiento para la siguiente carta
         }
     }
 
-    /**
-     * Sets the name of the player on the user interface.
-     */
-    public void setPlayerName(String name) {
-        humanName.setText(humanPlayer.getName());
-    }
-
-    public void initialize() {
-        Game game = new Game();
-
-        //declaration of a Card objet named fisrtCard that contains the first card in the table
-        Card firstCard = game.getDeck().getTopDiscard();
-
-        /*if the firstCard is not null and the topCart either
-        the image is loaded in the image view labeled as "topCard"
-        if (firstCard != null && topCard != null) {
-            String imagePath = "/com/example/fpoeuno/" + firstCard.getImageUrl(); // Asegúrate que esto devuelva algo como "images/cards-uno/1_red.png"
-            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
-            topCard.setImage(image);
-        }
-        */
-
-        // Mostrar la mano del humano
-        showPlayerHand(game.getHuman().getHand());
-        showMachineHand(game.getMachine().getHand());
-
-        game.printGameInfo();
+    @FXML
+    void onActionButtonSound(ActionEvent event) {
+        SoundManager.toggleMusic("music.mp3");
     }
 
 }

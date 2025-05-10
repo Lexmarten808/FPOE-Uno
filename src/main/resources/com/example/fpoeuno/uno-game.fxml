@@ -27,7 +27,7 @@
             <Rectangle2D />
          </viewport>
       </ImageView>
-      <Button layoutX="20.0" layoutY="17.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="27.0" prefWidth="34.0" style="-fx-background-radius: 200;" AnchorPane.bottomAnchor="453.0" AnchorPane.leftAnchor="20.0">
+      <Button layoutX="848.0" layoutY="14.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="27.0" prefWidth="34.0" style="-fx-background-radius: 200;" AnchorPane.bottomAnchor="456.0" AnchorPane.leftAnchor="848.0">
          <graphic>
             <ImageView fitHeight="25.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                <image>
@@ -42,7 +42,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <ImageView fitHeight="88.0" fitWidth="69.0" layoutX="192.0" layoutY="98.0" pickOnBounds="true" preserveRatio="true" rotate="1.8" AnchorPane.topAnchor="98.0">
+      <ImageView fitHeight="106.0" fitWidth="70.0" layoutX="525.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true" rotate="1.8">
          <image>
             <Image url="@images/cards-uno/deck_of_cards.png" />
          </image>
@@ -88,7 +88,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="736.0" layoutY="8.0" prefHeight="150.0" prefWidth="150.0">
+      <AnchorPane layoutX="20.0" layoutY="6.0" prefHeight="150.0" prefWidth="150.0">
          <children>
             <Circle fill="#27039e" layoutX="75.0" layoutY="60.0" radius="35.0" stroke="BLACK" strokeType="INSIDE" />
             <ImageView fitHeight="55.0" fitWidth="58.0" layoutX="46.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
@@ -127,8 +127,7 @@
             </Label>
          </children>
       </AnchorPane>
-      <ImageView id="topCardImageView" fx:id="topCard" fitHeight="150.0" fitWidth="200.0" layoutX="350.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true" />
-      <Pane fx:id="machineHandPane" layoutX="685.0" layoutY="55.0">
+      <Pane fx:id="machineHandPane" layoutX="165.0" layoutY="53.0">
          <children>
             <ImageView fitHeight="90.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -146,5 +145,16 @@
             </ImageView>
          </children>
       </Pane>
+      <ImageView id="topCardImageView" fx:id="topCard" fitHeight="90.0" fitWidth="58.0" layoutX="421.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="playerTurnFlag" fitHeight="45.0" fitWidth="38.0" layoutX="140.0" layoutY="340.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/icons/flag.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="machineTurnFlag" fitHeight="45.0" fitWidth="38.0" layoutX="140.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@images/icons/flag.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
