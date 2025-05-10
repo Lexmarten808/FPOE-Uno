@@ -4,7 +4,7 @@ import com.example.fpoeuno.models.alerts.AlertInformation;
 import com.example.fpoeuno.models.alerts.IAlert;
 import com.example.fpoeuno.models.Player;
 import com.example.fpoeuno.models.SoundManager;
-import com.example.fpoeuno.views.GameStage;
+import com.example.fpoeuno.views.GameView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -37,7 +37,14 @@ public class MenuController {
      */
     @FXML
     void onActionButtonStart(ActionEvent event) throws IOException {
-        String nickname = nicknameTextField.getText();
+        String nickname;
+
+        if (nicknameTextField.getText().isEmpty() || nicknameTextField == null) {
+            nickname = "Jugador";
+        } else {
+            nickname = nicknameTextField.getText();
+        }
+
         Player humanPlayer = new Player(nickname, true);
 
         // Close the current window (MenuStage)
@@ -45,7 +52,7 @@ public class MenuController {
         currentStage.close();
 
         // Open the game window (GameStage)
-        GameStage.getInstance().getGameController().setPlayer(humanPlayer);
+        GameView.getInstance().getGameController().setPlayer(humanPlayer);
     }
 
     /**

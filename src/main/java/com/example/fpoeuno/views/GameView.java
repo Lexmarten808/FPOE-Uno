@@ -13,7 +13,7 @@ import java.io.IOException;
  * This class extends {@link javafx.stage.Stage} and is responsible for loading the user interface from an FXML file,
  * setting the scene, the application icon, and displaying the game window.
  */
-public class GameStage extends Stage {
+public class GameView extends Stage {
 
     /**
      * The game controller that handles the game logic and UI interactions.
@@ -25,7 +25,7 @@ public class GameStage extends Stage {
      *
      * @throws IOException if an error occurs while loading the FXML file or the icon image.
      */
-    public GameStage() throws IOException {
+    public GameView() throws IOException {
         // Load the main game interface from the FXML file
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
                 "/com/example/fpoeuno/uno-game.fxml"));
@@ -52,25 +52,25 @@ public class GameStage extends Stage {
     }
 
     /**
-     * Static method implementing the Singleton pattern to ensure there is only one instance of {@link GameStage}.
+     * Static method implementing the Singleton pattern to ensure there is only one instance of {@link GameView}.
      *
-     * @return the unique instance of {@link GameStage}.
+     * @return the unique instance of {@link GameView}.
      * @throws IOException if an error occurs while creating the instance.
      */
-    public static GameStage getInstance() throws IOException {
+    public static GameView getInstance() throws IOException {
         if (GameStageHolder.INSTANCE == null) {
-            return GameStageHolder.INSTANCE = new GameStage();
+            return GameStageHolder.INSTANCE = new GameView();
         } else {
             return GameStageHolder.INSTANCE;
         }
     }
 
     /**
-     * Helper static class that holds the unique instance of {@link GameStage}.
+     * Helper static class that holds the unique instance of {@link GameView}.
      * This is used to efficiently implement the Singleton pattern.
      */
     private static class GameStageHolder {
-        private static GameStage INSTANCE;
+        private static GameView INSTANCE;
     }
 
 }

@@ -10,10 +10,10 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
-import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Controller class for the main game view.
@@ -21,117 +21,21 @@ import java.util.List;
  * displaying the player's name, handling sound toggle actions, and initializing the game.
  */
 public class GameController {
-//declaration of the id of the top card in the table
+
     @FXML
     private ImageView topCard;
 
-    private Player humanPlayer;
-
-    /**
-     * Label that displays the player's name.
-     */
     @FXML
-    private Label humanName;
+    private Pane playerHandPane;
 
-    /**
-     * Sets the player for the game and updates the player's name on the interface.
-     *
-     * @param humanPlayer the Player object representing the current player.
-     */
-    public void setPlayer(Player humanPlayer) {
-        this.humanPlayer = humanPlayer;
-        if (humanName != null) {
-            humanName.setText(humanPlayer.getName());
-        }
-    }
-
-    /**
-     * HBox container that holds the player's hand of cards.
-     */
     @FXML
-    private HBox playerHandBox;
+    private Pane machineHandPane;
 
-    /**
-     * ImageView that displays the top card in the center of the screen.
-     */
     @FXML
     private ImageView topCardImageView;
 
-    private Game game;
-
-    /**
-     * Initializes the game view by setting up the game instance, adjusting the layput,
-     * and starting the game.
-     */
-    public void initialize() {
-        //note this must have an ioExeption in case the string humanName is null
-        //otherwise it would throw an error
-
-        // This runs when the view is loaded
-        game = new Game(); // Initialize the game instance
-
-        //declaration of a Card objet named fisrtCard that contains the first card in the table
-        Card firstCard = game.getDeck().getTopDiscard();
-
-        /*if the firstCard is not null and the topCart either
-        the image is loaded in the image view labeled as "topCard"*/
-        if (firstCard != null && topCard != null) {
-            String imagePath = "/com/example/fpoeuno/" + firstCard.getImageUrl(); // Asegúrate que esto devuelva algo como "images/cards-uno/1_red.png"
-            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
-            topCard.setImage(image);
-        }
-
-        // Set spacing between cards in the player's hand
-        playerHandBox.setSpacing(5); // Set spacing to 5px
-
-        // Mostrar la mano inicial
-         showPlayerHand(game.getHuman().getHand());
-
-        // Start the game and display the first card
-        game.startGame(); // This will update the discard pile
-
-        game.getDeck().printDrawPile();
-        game.getDeck().printDiscardPile();
-    }
-
-
-    public void showPlayerHand(List<Card> hand) {
-        playerHandBox.getChildren().clear(); // Limpiar antes de actualizar
-
-        double xOffset = 0;  // Desplazamiento en el eje X, inicializado a 0
-
-        for (Card card : hand) {
-            String imagePath = "/com/example/fpoeuno/" + card.getImageUrl();
-            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
-            ImageView imageView = new ImageView(image);
-            imageView.setFitHeight(90); // Ajusta el tamaño si quieres
-            imageView.setFitWidth(58); // Ajusta el tamaño si quieres
-            imageView.setPreserveRatio(true);
-
-            /*this sets the cursor image as Hand
-            when the cursor is over the image*/
-            imageView.setCursor(Cursor.HAND);
-
-
-            // Establecer la posición X de la carta
-            imageView.setLayoutX(xOffset);
-
-            // Agregar la carta a la mano
-            playerHandBox.getChildren().add(imageView);
-
-            // Incrementar el desplazamiento para la siguiente carta
-            xOffset += 100;  // Aumentamos el desplazamiento en 50px
-        }
-    }
-
-
-
-    /**
-     * Sets the name of the player on the user interface.
-     */
-    public void setPlayerName(String name) {
-        humanName.setText(humanPlayer.getName());
-    }
+    @FXML
+    private Label humanName;
 
     /**
      * Handles the sound toggle button click event.
@@ -144,6 +48,111 @@ public class GameController {
         // Toggle background music
         SoundManager.toggleMusic("music.mp3");
 
+    }
+
+    private Player humanPlayer;
+
+    /**
+     * Sets the player for the game and updates the player's name on the interface.
+     *
+     * @param humanPlayer the Player object representing the current player.
+     */
+    public void setPlayer(Player humanPlayer) {
+        this.humanPlayer = humanPlayer;
+        if (humanName != null) {
+            humanName.setText(humanPlayer.getName());
+        } else {
+            humanName.setText("Jugador");
+        }
+    }
+
+    /**
+     * Initializes the player's hand view by updating the layout with the player's cards,
+     * setting up the images, and adjusting their position within the game interface.
+     *
+     * @param hand a list of Card objects representing the player's current hand.
+     */
+    public void showPlayerHand(List<Card> hand) {
+        // Clear the current hand before updating
+        playerHandPane.getChildren().clear();
+
+        double xOffset = 0; // X-axis offset initializes to 0
+
+        // Iterate over the cards in the player's hand
+        for (Card card : hand) {
+            // Load the card's image
+            Image image = new Image(Objects.requireNonNull(getClass().getResource("/com/example/fpoeuno/" + card.getImageUrl())).toExternalForm());
+            ImageView imageView = new ImageView(image);
+
+            // Adjust the size of the card
+            imageView.setFitHeight(90);
+            imageView.setFitWidth(58);
+            imageView.setPreserveRatio(true);
+
+            imageView.setCursor(Cursor.HAND); // Change the cursor to a hand when hovering the card
+            imageView.setLayoutX(xOffset); // Set the card's X position in the Pane
+            imageView.setLayoutY(0); // Set the card's Y position
+
+            playerHandPane.getChildren().add(imageView); // Add the card to the Pane
+
+            xOffset += 63; // Increase de X-axis offset for the next card
+        }
+    }
+
+    public void showMachineHand(List<Card> hand) {
+        machineHandPane.getChildren().clear();
+
+        double cardSpacing = 63; // Espacio entre cartas
+        double cardWidth = 58;   // Ancho de cada carta
+        double targetX = 685;    // Posición X deseada para la última carta
+        double targetY = 55;     // Posición Y deseada
+
+        double startX = targetX - (hand.size() - 1) * cardSpacing;
+
+        Image image = new Image(Objects.requireNonNull(getClass().getResource("/com/example/fpoeuno/images/cards-uno/card_uno.png")).toExternalForm());
+
+        for (int i = 0; i < hand.size(); i++) {
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(90);
+            imageView.setFitWidth(cardWidth);
+            imageView.setPreserveRatio(true);
+            imageView.setCursor(Cursor.HAND);
+
+            double x = startX + i * cardSpacing;
+            imageView.setLayoutX(x);
+            imageView.setLayoutY(targetY);
+
+            machineHandPane.getChildren().add(imageView);
+        }
+    }
+
+    /**
+     * Sets the name of the player on the user interface.
+     */
+    public void setPlayerName(String name) {
+        humanName.setText(humanPlayer.getName());
+    }
+
+    public void initialize() {
+        Game game = new Game();
+
+        //declaration of a Card objet named fisrtCard that contains the first card in the table
+        Card firstCard = game.getDeck().getTopDiscard();
+
+        /*if the firstCard is not null and the topCart either
+        the image is loaded in the image view labeled as "topCard"
+        if (firstCard != null && topCard != null) {
+            String imagePath = "/com/example/fpoeuno/" + firstCard.getImageUrl(); // Asegúrate que esto devuelva algo como "images/cards-uno/1_red.png"
+            Image image = new Image(getClass().getResource(imagePath).toExternalForm());
+            topCard.setImage(image);
+        }
+        */
+
+        // Mostrar la mano del humano
+        showPlayerHand(game.getHuman().getHand());
+        showMachineHand(game.getMachine().getHand());
+
+        game.printGameInfo();
     }
 
 }

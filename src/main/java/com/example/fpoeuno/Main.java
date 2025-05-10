@@ -1,6 +1,6 @@
 package com.example.fpoeuno;
 
-import com.example.fpoeuno.views.MenuStage;
+import com.example.fpoeuno.views.MenuView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -10,7 +10,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        MenuStage.getInstance();
+        MenuView.getInstance();
     }
 
     public static void main(String[] args) {

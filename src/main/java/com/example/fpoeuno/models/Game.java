@@ -1,24 +1,18 @@
 package com.example.fpoeuno.models;
 
-import com.example.fpoeuno.controllers.GameController;
+import com.example.fpoeuno.models.enums.CardColor;
+import com.example.fpoeuno.models.enums.CardType;
 
-import java.util.List;
+import java.util.Scanner;
 
-/**
- * Manages the game state, including players, the deck, and initial setup.
- * Handles the flow of a basic UNO game between a human and the machine.
- */
 public class Game {
 
-    private Deck deck;
-    private Player human;
-    private Player machine;
+    private final Deck deck;
+    private final Player human;
+    private final Player machine;
     private Player currentPlayer;
+    private Card topCard;
 
-    /**
-     * Constructs a new UNO game instance.
-     * Initializes the deck, players, deals initial cards, and starts the game.
-     */
     public Game() {
         this.deck = new Deck();
         this.human = new Player("Human", true);
@@ -28,9 +22,6 @@ public class Game {
         startGame();
     }
 
-    /**
-     * Deals the initial hand of 5 cards to each player.
-     */
     private void dealInitialCards() {
         for (int i = 0; i < 5; i++) {
             human.drawCard(deck.drawCard());
@@ -38,76 +29,160 @@ public class Game {
         }
     }
 
-    /**
-     * Sets up the initial state of the game.
-     * Places the first card on the discard pile and sets the current player.
-     */
     public void startGame() {
         // Sacamos la primera carta del mazo
-        Card firstCard = deck.drawCard();
+        topCard = deck.drawCard();
+        deck.discard(topCard);
+        System.out.println("First card on the table: " + topCard);
 
-        // Descartamos la carta en la pila de descarte
-        deck.discard(firstCard);
-
-        System.out.println("First card on the table: " + firstCard);
-
-        // Human starts the game
+        // El jugador humano empieza
         this.currentPlayer = human;
 
-        // Game logic would continue here
+        if (topCard.getType() == CardType.WILD || topCard.getType() == CardType.WILD_DRAW_FOUR) {
+            handleWildCardEffect();
+        }
     }
 
-    /**
-     * Prints both players' hands to the console.
-     * Useful for debugging or test visualization.
-     */
-    public void printHands() {
+    public void playTurn() {
+        System.out.println(currentPlayer.getName() + "'s turn:");
+        currentPlayer.printPlayerInfo();
+
+        // El jugador humano juega primero
+        if (currentPlayer.isHuman()) {
+            playHumanTurn();
+        } else {
+            playMachineTurn();
+        }
+
+        // Cambiar de turno
+        currentPlayer = (currentPlayer == human) ? machine : human;
+    }
+
+    private void playHumanTurn() {
+        Scanner scanner = new Scanner(System.in);
+
+        // Mostrar la carta en la parte superior y las cartas del jugador
+        System.out.println("Top card: " + topCard);
+        System.out.println("Choose a card to play:");
+
+        // Mostrar las cartas en mano
+        for (int i = 0; i < human.getHand().size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + human.getHand().get(i));
+        }
+
+        // Pedir al jugador que elija una carta
+        int choice = scanner.nextInt() - 1;
+        Card chosenCard = human.getHand().get(choice);
+
+        if (chosenCard.canPlayOn(topCard)) {
+            human.playCard(chosenCard);
+            topCard = chosenCard;
+            deck.discard(chosenCard);
+
+            // Si es un comodín, el jugador debe elegir un color
+            if (chosenCard.getType() == CardType.WILD || chosenCard.getType() == CardType.WILD_DRAW_FOUR) {
+                handleWildCardEffect();
+            }
+        } else {
+            System.out.println("You cannot play that card! Try again.");
+            playHumanTurn();  // Devolver al mismo jugador si no puede jugar
+        }
+    }
+
+    private void playMachineTurn() {
+        System.out.println("Machine's turn:");
+
+        // Elige una carta aleatoria que pueda jugar
+        Card chosenCard = null;
+        for (Card card : machine.getHand()) {
+            if (card.canPlayOn(topCard)) {
+                chosenCard = card;
+                break;
+            }
+        }
+
+        if (chosenCard != null) {
+            machine.playCard(chosenCard);
+            topCard = chosenCard;
+            deck.discard(chosenCard);
+            System.out.println("Machine played: " + chosenCard);
+
+            // Si es un comodín, la máquina también elige un color (simulamos elección aleatoria)
+            if (chosenCard.getType() == CardType.WILD || chosenCard.getType() == CardType.WILD_DRAW_FOUR) {
+                handleWildCardEffect();
+            }
+        } else {
+            // Si la máquina no tiene jugadas posibles, se toma una carta
+            Card drawnCard = deck.drawCard();
+            machine.drawCard(drawnCard);
+            System.out.println("Machine drew a card: " + drawnCard);
+        }
+    }
+
+    private void handleWildCardEffect() {
+        if (currentPlayer.isHuman()) {
+            // El jugador humano elige un color si jugó un comodín
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Choose a color (1: Red, 2: Green, 3: Blue, 4: Yellow):");
+            int colorChoice = scanner.nextInt();
+            switch (colorChoice) {
+                case 1:
+                    topCard.setChosenColor(CardColor.RED);
+                    break;
+                case 2:
+                    topCard.setChosenColor(CardColor.GREEN);
+                    break;
+                case 3:
+                    topCard.setChosenColor(CardColor.BLUE);
+                    break;
+                case 4:
+                    topCard.setChosenColor(CardColor.YELLOW);
+                    break;
+                default:
+                    System.out.println("Invalid choice. No color chosen.");
+            }
+            System.out.println("You chose: " + topCard.getEffectiveColor());
+        } else {
+            // En este caso, la máquina elige un color aleatorio
+            CardColor randomColor = CardColor.values()[(int) (Math.random() * CardColor.values().length)];
+            topCard.setChosenColor(randomColor);
+            System.out.println("Machine chose: " + randomColor);
+        }
+    }
+
+
+    private void chooseColorForWild(Card wildCard) {
+        System.out.println("Choose a color to start the game (blue, green, red, yellow):");
+
+        // Simulación temporal por consola (puedes reemplazar esto por un diálogo en JavaFX)
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        String chosenColor = scanner.nextLine().trim().toUpperCase();
+
+        try {
+            CardColor selectedColor = CardColor.valueOf(chosenColor);
+            wildCard.setColor(selectedColor); // actualiza color de la carta
+            System.out.println("Color set to: " + selectedColor);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid color. Defaulting to RED.");
+            wildCard.setColor(CardColor.RED);
+        }
+
+        currentPlayer = human;
+    }
+
+    // --- Getters ----
+    public Deck getDeck() { return deck; }
+    public Player getHuman() { return human; }
+    public Player getMachine() { return machine; }
+    public Player getCurrentPlayer() { return currentPlayer; }
+    public Card getTopCard() { return topCard; }
+
+    public void printGameInfo() {
+        deck.printDeckInfo();
         System.out.println("=== Human Player's Hand ===");
-        human.printHand();
-
+        human.printPlayerInfo();
         System.out.println("=== Machine Player's Hand ===");
-        machine.printHand();
-    }
-
-    /**
-     * @return the current game deck (useful for controllers or testing)
-     */
-    public Deck getDeck() {
-        return deck;
-    }
-
-    /**
-     * @return the player whose turn it is
-     */
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
-
-    /**
-     * @return the human player
-     */
-    public Player getHuman() {
-        return human;
-    }
-
-    /**
-     * @return the machine player
-     */
-    public Player getMachine() {
-        return machine;
-    }
-
-    /**
-     * Prints the current state of the deck and discard pile.
-     * Useful for debugging or verifying game logic.
-     */
-    public void printDeckState() {
-        System.out.println("---- Deck State ----");
-        System.out.println("Cards in draw pile: " + deck.getDrawPileSize());
-        System.out.println("Cards in discard pile: " + deck.getDiscardPileSize());
-
-        deck.printDrawPile();
-        deck.printDiscardPile();
+        machine.printPlayerInfo();
     }
 
 }

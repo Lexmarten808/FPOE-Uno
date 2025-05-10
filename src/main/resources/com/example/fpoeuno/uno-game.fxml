@@ -9,7 +9,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
@@ -88,15 +88,6 @@
             </Label>
          </children>
       </AnchorPane>
-      <HBox fx:id="playerHandBox" layoutX="165.0" layoutY="375.0">
-         <children>
-            <ImageView fitHeight="90.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/cards-uno/card_uno.png" />
-               </image>
-            </ImageView>
-         </children>
-      </HBox>
       <AnchorPane layoutX="736.0" layoutY="8.0" prefHeight="150.0" prefWidth="150.0">
          <children>
             <Circle fill="#27039e" layoutX="75.0" layoutY="60.0" radius="35.0" stroke="BLACK" strokeType="INSIDE" />
@@ -136,7 +127,8 @@
             </Label>
          </children>
       </AnchorPane>
-      <HBox fx:id="machineHandBox" layoutX="685.0" layoutY="55.0">
+      <ImageView id="topCardImageView" fx:id="topCard" fitHeight="150.0" fitWidth="200.0" layoutX="350.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true" />
+      <Pane fx:id="machineHandPane" layoutX="685.0" layoutY="55.0">
          <children>
             <ImageView fitHeight="90.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -144,7 +136,15 @@
                </image>
             </ImageView>
          </children>
-      </HBox>
-      <ImageView id="topCardImageView" fx:id="topCard" fitHeight="150.0" fitWidth="200.0" layoutX="350.0" layoutY="130.0" pickOnBounds="true" preserveRatio="true" />
+      </Pane>
+      <Pane fx:id="playerHandPane" layoutX="165.0" layoutY="375.0">
+         <children>
+            <ImageView fitHeight="90.0" fitWidth="58.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/cards-uno/card_uno.png" />
+               </image>
+            </ImageView>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

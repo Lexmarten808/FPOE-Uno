@@ -1,64 +1,70 @@
 package com.example.fpoeuno.models;
 
-/**
- * Represents a single UNO card with its image URL, type, color, and number.
- * This model encapsulates all relevant data used throughout the game.
- */
+import com.example.fpoeuno.models.enums.CardColor;
+import com.example.fpoeuno.models.enums.CardType;
+
 public class Card {
 
-    private String imageUrl;
-    private String type;
-    private String color;
-    private byte number;
+    private final CardType type;
+    private CardColor color;
+    private final int value;
+    private final String imageUrl;
+    private CardColor chosenColor;
 
-    /**
-     * Constructs a new UNO card.
-     *
-     * @param imageUrl the path or URL to the card's image
-     * @param type     the card's type ("number", "skip", "+2", "+4")
-     * @param color    the color of the card ("blue", "green", "red", "yellow", "wild")
-     * @param number   the card's number (0–9 for number cards, -1 for special cards)
-     */
-    public Card(String imageUrl, String type, String color, byte number) {
-        this.imageUrl = imageUrl;
+    public Card(CardType type, CardColor color, int value, String imageUrl) {
         this.type = type;
         this.color = color;
-        this.number = number;
+        this.value = value;
+        this.imageUrl = imageUrl;
+        this.chosenColor = null; // Por defecto no hay color elegido para los comodines
     }
 
-    /**
-     * Returns a string representation of the card for console display.
-     *
-     * @return formatted string of card attributes
-     */
-    @Override
-    public String toString() {
-        String numberDisplay = (number >= 0) ? String.valueOf(number) : "N/A";
-        return String.format("[%s | %s | %s]", type, color, numberDisplay);
-    }
-
-    /** @return the image path or URL of the card */
+    // --- Getters ---
+    public CardType getType() { return type; }
+    public CardColor getColor() { return color; }
+    public int getValue() { return value; }
     public String getImageUrl() { return imageUrl; }
 
-    /** @param imageUrl sets the image path or URL of the card */
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    // --- Setters ---
+    public void setColor(CardColor color) {
+        if (this.color == CardColor.WILD && (this.type == CardType.WILD || this.type == CardType.WILD_DRAW_FOUR)) {
+            this.color = color;
+        } else {
+            throw new UnsupportedOperationException("Only wild cards can have their color changed.");
+        }
+    }
 
-    /** @return the type of the card */
-    public String getType() { return type; }
+    // --- Chosen Color Logic for Wild Cards ---
+    public void setChosenColor(CardColor chosenColor) {
+        if (this.type == CardType.WILD || this.type == CardType.WILD_DRAW_FOUR) {
+            this.chosenColor = chosenColor;
+        } else {
+            throw new UnsupportedOperationException("Only wild cards can set a chosen color.");
+        }
+    }
 
-    /** @param type sets the type of the card */
-    public void setType(String type) { this.type = type; }
+    public CardColor getEffectiveColor() {
+        // Si la carta es comodín, se devuelve el color elegido, si no, se devuelve el color original.
+        return this.type == CardType.WILD || this.type == CardType.WILD_DRAW_FOUR ?
+                (chosenColor != null ? chosenColor : color) : color;
+    }
 
-    /** @return the color of the card */
-    public String getColor() { return color; }
+    // --- Can Play Logic ---
+    public boolean canPlayOn(Card other) {
+        if (this.getEffectiveColor() == CardColor.WILD) return true;
 
-    /** @param color sets the color of the card */
-    public void setColor(String color) { this.color = color; }
+        return this.getEffectiveColor() == other.getColor() ||
+                this.type == other.type ||
+                (this.type == CardType.NUMBER && other.type == CardType.NUMBER && this.value == other.value);
+    }
 
-    /** @return the card's number (or -1 for non-numeric cards) */
-    public byte getNumber() { return number; }
-
-    /** @param number sets the card's number */
-    public void setNumber(byte number) { this.number = number; }
+    @Override
+    public String toString() {
+        if (type == CardType.NUMBER) {
+            return String.format("[%s | %d]", color, value);
+        } else {
+            return String.format("[%s | %s]", color, type);
+        }
+    }
 
 }
