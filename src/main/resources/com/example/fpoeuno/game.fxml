@@ -99,5 +99,13 @@
             </ImageView>
          </graphic>
       </Button>
+      <AnchorPane fx:id="colorSelectionBox" layoutX="18.0" layoutY="251.0" prefHeight="57.0" prefWidth="152.0" visible="false">
+         <children>
+            <Button layoutX="14.0" layoutY="-4.0" mnemonicParsing="false" onAction="#onColorSelectedYellow" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: yellow; -fx-background-radius: 222;" text="amarillo" />
+            <Button layoutX="14.0" layoutY="26.0" mnemonicParsing="false" onAction="#onColorSelectedBlue" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: blue; -fx-background-radius: 222;" text="azul" />
+            <Button layoutX="73.0" layoutY="-5.0" mnemonicParsing="false" onAction="#onColorSelectedRed" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: red; -fx-background-radius: 222;" text="rojo" />
+            <Button layoutX="72.0" layoutY="26.0" mnemonicParsing="false" onAction="#onColorSelectedGreen" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: green; -fx-background-radius: 222;" text="verde" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
