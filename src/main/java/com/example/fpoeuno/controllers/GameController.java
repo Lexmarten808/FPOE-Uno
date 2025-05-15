@@ -2,6 +2,7 @@ package com.example.fpoeuno.controllers;
 
 import com.example.fpoeuno.models.*;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -11,6 +12,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import java.io.IOException;
@@ -40,6 +42,79 @@ public class GameController {
     private Player human;
     private Player computer;
     Card topCard;
+    private Thread computerTurnThread;
+    private boolean computerCanPlay = true;
+
+    public void initializeComputerTurnThread() {
+        computerTurnThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000); // Espera 5 segundos
+
+                    if ("Computer".equals(game.getCurrentTurn()) && computerCanPlay) {
+                        computerCanPlay = false;
+                        Platform.runLater(() -> {
+                            playComputerTurn();
+                            changeTurn();
+                            computerCanPlay = true;
+                        });
+                    } else {
+                        System.out.println("No es el turno de la computadora.");
+                    }
+                } catch (InterruptedException ex) {
+                    System.out.println("Hilo de la computadora interrumpido.");
+                    Thread.currentThread().interrupt();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        computerTurnThread.setDaemon(true); // Se detiene con la aplicación
+        computerTurnThread.start();
+    }
+
+    private void updateComputerView() {
+        listViewComputerHand.getItems().setAll(computer.getHand());
+    }
+
+    private void updateHumanView() {
+        listViewHumanHand.getItems().setAll(human.getHand());
+    }
+
+    private void playComputerTurn() {
+        System.out.println("La computadora juega su turno...");
+
+        boolean played = false;
+
+        System.out.println("***********computer hand: antes de jugar");
+        computer.printHand();
+
+        for (Card selectedCard : new ArrayList<>(computer.getHand())) {
+            if (selectedCard != null && isPlayable(selectedCard)) {
+                topCard = selectedCard; //  Actualiza la carta superior
+                setTopCard(topCard); // actualiza imageViewTopCard
+                computer.removeCard(selectedCard); //  Elimina la carta del modelo
+                deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
+                played = true;
+                break;
+            }
+        }
+
+        if (!played) {
+            Card draw = deck.drawCard();
+            computer.addCard(draw);
+        }
+
+        System.out.println("***********computer hand: después de jugar");
+        computer.printHand();
+    }
+
+    public void stopComputerTurnThread() {
+        if (computerTurnThread != null && computerTurnThread.isAlive()) {
+            computerTurnThread.interrupt();
+        }
+    }
 
     public void setHuman(Player human) {
         this.human = human;
@@ -60,6 +135,7 @@ public class GameController {
 
     public void setComputer(Player computer) {
         this.computer = computer;
+        initializeComputerTurnThread();
         initializeComputerHandView();
     }
     private void initializeHumanHandView() {
@@ -189,7 +265,7 @@ public class GameController {
         deck.printDeck();
         System.out.println("***********human hand:");
         human.printHand();
-        System.out.println("***********computer hand");
+        System.out.println("***********computer hand:");
         computer.printHand();
     }
 
