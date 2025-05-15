@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.MenuController">
+   <style>-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);</style>
+   
+   <children>
+      <Label alignment="CENTER" layoutX="420.0" layoutY="400.0" prefHeight="35.0" prefWidth="260.0" style="-fx-background-color: #B71C1C; -fx-padding: 5;" text="Ingresa tu nickname antes de iniciar" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Comic Sans MS Bold" size="14.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Label>
+      <TextField fx:id="textFieldNickname" layoutX="420.0" layoutY="450.0" prefHeight="25.0" prefWidth="260.0" promptText="Nickname..." style="-fx-cursor: text;">
+         <effect>
+            <DropShadow />
+         </effect>
+      </TextField>
+      <Button contentDisplay="CENTER" layoutX="505.0" layoutY="500.0" mnemonicParsing="false" onAction="#onActionButtonIniciar" prefHeight="30.0" prefWidth="90.0" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-cursor: hand;" text="INICIAR" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <ImageView fitHeight="302.0" fitWidth="381.0" layoutX="379.0" layoutY="77.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/icons/uno-logo.png" />
+         </image>
+         <effect>
+            <DropShadow />
+         </effect>
+      </ImageView>
+      <Button layoutX="1040.0" layoutY="30.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
+         <graphic>
+            <ImageView accessibleRole="BUTTON" fitHeight="32.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/icons/sound.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Button alignment="CENTER" graphicTextGap="0.0" layoutX="30.0" layoutY="30.0" mnemonicParsing="false" onAction="#onActionButtonAyuda" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-cursor: hand; -fx-padding: 0;" text="Ayuda" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+         <graphic>
+            <ImageView fitHeight="25.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+               <image>
+                  <Image url="@images/icons/question-mark.png" />
+               </image>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </ImageView>
+         </graphic>
+      </Button>
+   </children>
+</AnchorPane>
