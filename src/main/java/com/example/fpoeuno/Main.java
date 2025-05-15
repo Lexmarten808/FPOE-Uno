@@ -1,5 +1,6 @@
 package com.example.fpoeuno;
 
+import com.example.fpoeuno.models.SoundManager;
 import com.example.fpoeuno.views.MenuView;
 
 import javafx.application.Application;
@@ -11,6 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        // SoundManager.toggleMusic("music.mp3");
         MenuView menuView = MenuView.getInstance();
         menuView.show();
     }

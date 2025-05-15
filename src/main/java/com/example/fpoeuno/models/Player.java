@@ -17,16 +17,8 @@ public class Player {
         this.hand = FXCollections.observableArrayList();
     }
 
-    public void drawCard(Card card) {
-        if (card != null) {
-            hand.add(card);
-        }
-    }
-
-    public void removeCard(Card card) {
-        // Elimina de la lista lógica
-        this.hand.remove(card);
-    }
+    public void addCard(Card card) { this.hand.add(card); }
+    public void removeCard(Card card) { this.hand.remove(card); }
 
     public String getNickname() { return nickname; }
     public boolean isHuman() { return isHuman; }

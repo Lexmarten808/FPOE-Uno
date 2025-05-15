@@ -30,8 +30,8 @@ public class MenuController {
         Player computer = new Player("Computer", false);
 
         for (int i = 0; i < 5; i++) {
-            human.drawCard(deck.drawCard());
-            computer.drawCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
         }
 
         Card topCard = deck.drawCard();

@@ -1,27 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="533.0" prefWidth="842.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.GameController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" style="-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.GameController">
    <children>
-      <Label fx:id="labelNickname" layoutX="93.0" layoutY="267.0" text="NICKNAME">
+      <Label fx:id="labelNickname" alignment="CENTER" contentDisplay="TOP" layoutX="30.0" layoutY="445.0" prefHeight="30.0" prefWidth="120.0" text="JUGADOR" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="14.0" />
          </font>
+         <graphic>
+            <ImageView fitHeight="103.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/icons/player.png" />
+               </image>
+            </ImageView>
+         </graphic>
       </Label>
-      <Button layoutX="101.0" layoutY="304.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
-      <ListView fx:id="listViewComputerHand" layoutX="20.0" layoutY="30.0" prefHeight="120.0" prefWidth="800.0" />
-      <ListView fx:id="listViewHumanHand" layoutX="20.0" layoutY="380.0" prefHeight="120.0" prefWidth="800.0" />
-      <ImageView fx:id="imageViewTopCard" fitHeight="150.0" fitWidth="200.0" layoutX="524.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true">
+      <Button layoutX="273.0" layoutY="283.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
+      <ListView fx:id="listViewComputerHand" layoutX="175.0" layoutY="30.0" prefHeight="120.0" prefWidth="800.0" />
+      <ListView fx:id="listViewHumanHand" layoutX="175.0" layoutY="450.0" prefHeight="120.0" prefWidth="800.0" />
+      <ImageView fx:id="imageViewTopCard" fitHeight="125.0" fitWidth="80.0" layoutX="535.0" layoutY="238.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@images/cards/card_uno.png" />
          </image>
       </ImageView>
+      <Label alignment="CENTER" contentDisplay="TOP" layoutX="30.0" layoutY="30.0" prefHeight="20.0" prefWidth="120.0" text="COMPUTADOR" textAlignment="CENTER" textFill="WHITE">
+         <graphic>
+            <ImageView fitHeight="93.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/icons/machine.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Button contentDisplay="TOP" layoutX="796.0" layoutY="211.0" mnemonicParsing="false" onAction="#onActionButtonRobar" style="-fx-background-color: #a80f0f;" text="ROBAR CARTA" textFill="WHITE">
+         <graphic>
+            <ImageView fitHeight="140.0" fitWidth="99.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/cards/deck_of_cards.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <ImageView fx:id="imageViewComputerFlag" fitHeight="36.0" fitWidth="49.0" layoutX="72.0" layoutY="156.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@images/icons/flag.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imageViewHumanFlag" fitHeight="36.0" fitWidth="49.0" layoutX="72.0" layoutY="400.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/icons/flag.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="1040.0" layoutY="30.0" mnemonicParsing="false" onAction="#onActionButtonSound" prefHeight="30.0" prefWidth="30.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
+         <graphic>
+            <ImageView accessibleRole="BUTTON" fitHeight="32.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@images/icons/sound.png" />
+               </image>
+            </ImageView>
+         </graphic>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Button>
+      <Button alignment="CENTER" graphicTextGap="0.0" layoutX="1000.0" layoutY="540.0" mnemonicParsing="false" onAction="#onActionButtonAyuda" prefHeight="30.0" prefWidth="80.0" style="-fx-background-color: #C62828; -fx-background-radius: 20; -fx-cursor: hand; -fx-padding: 0;" text="Ayuda" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+         <graphic>
+            <ImageView fitHeight="25.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+               <image>
+                  <Image url="@images/icons/question-mark.png" />
+               </image>
+               <effect>
+                  <DropShadow />
+               </effect>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>
