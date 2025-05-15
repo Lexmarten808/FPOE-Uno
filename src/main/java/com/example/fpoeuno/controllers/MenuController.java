@@ -1,13 +1,14 @@
 package com.example.fpoeuno.controllers;
 
-import com.example.fpoeuno.models.AlertHelper;
-import com.example.fpoeuno.models.SoundManager;
-import com.example.fpoeuno.views.UnoApplication;
+import com.example.fpoeuno.models.*;
+import com.example.fpoeuno.views.GameView;
+import com.example.fpoeuno.views.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -18,6 +19,8 @@ import java.io.IOException;
  * Handles interactions such as starting the game, toggling sound, and showing game rules.
  */
 public class MenuController {
+    @FXML
+    private TextField textFieldNickname;
 
     /**
      * Displays an informational alert dialog with the rules of UNO
@@ -56,22 +59,42 @@ public class MenuController {
      * @param event the action event triggered by the button click
      */
     @FXML
-    void onActionButtonIniciar(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(UnoApplication.class.getResource("/com/example/fpoeuno/ui/uno-game.fxml"));
-            Scene scene = new Scene(loader.load());
+    void onActionButtonIniciar(ActionEvent event)throws IOException {
 
-            Stage stage = new Stage();
-            stage.setTitle("UNO Game");
-            stage.setScene(scene);
-            stage.show();
 
-            // Close the menu window
-            ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        String nickname = textFieldNickname.getText();
+        if (nickname.isBlank()) {
+            nickname = "Jugador";
         }
+
+        Player human = new Player("Jugador", true);
+        human.setNickname(nickname);
+
+        Deck deck = new Deck();
+        Player computer = new Player("Computer", false);
+
+        for (int i = 0; i < 5; i++) {
+            human.drawCard(deck.drawCard());
+            computer.drawCard(deck.drawCard());
+        }
+
+        Card topCard = deck.drawCard();
+        deck.discardCard(topCard);
+
+
+
+        GameView gameView = GameView.getInstance();
+        gameView.show();
+
+        gameView.getController().setHuman(human);
+        gameView.getController().setComputer(computer);
+        gameView.getController().setDeck(deck);
+        gameView.getController().setTopCard(topCard);
+
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        currentStage.close();
     }
+
 
 }

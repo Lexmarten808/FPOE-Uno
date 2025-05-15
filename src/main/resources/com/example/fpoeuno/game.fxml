@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="533.0" prefWidth="842.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.unolast.controllers.GameController">
+   <children>
+      <Label fx:id="labelNickname" layoutX="93.0" layoutY="267.0" text="NICKNAME">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Button layoutX="101.0" layoutY="304.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
+      <ListView fx:id="listViewComputerHand" layoutX="20.0" layoutY="30.0" prefHeight="120.0" prefWidth="800.0" />
+      <ListView fx:id="listViewHumanHand" layoutX="20.0" layoutY="380.0" prefHeight="120.0" prefWidth="800.0" />
+      <ImageView fx:id="imageViewTopCard" fitHeight="150.0" fitWidth="200.0" layoutX="524.0" layoutY="192.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/cards/card_uno.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
