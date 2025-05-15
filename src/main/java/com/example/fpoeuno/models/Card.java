@@ -2,7 +2,7 @@ package com.example.fpoeuno.models;
 
 public class Card {
 
-    private final String color;
+    private String color; //no longer final
     private final String value;
     private final String imagePath;
 
@@ -11,6 +11,7 @@ public class Card {
         this.value = value;
         this.imagePath = imagePath;
     }
+    public String setColor(String color) {this.color= color;return color;}//setter
 
     public String getColor() { return color; }
     public String getValue() { return value; }

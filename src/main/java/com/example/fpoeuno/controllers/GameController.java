@@ -10,13 +10,15 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.Objects;
 
 import java.io.IOException;
 
 public class GameController {
-
+    @FXML
+    AnchorPane colorSelectionBox;
     @FXML
     private Label labelNickname;
 
@@ -48,6 +50,7 @@ public class GameController {
     }
 
     public void setTopCard(Card card) {
+        String currentTurn = game.getCurrentTurn();
         this.topCard = card;
         showImageViewTopCard(topCard);
     }
@@ -62,6 +65,7 @@ public class GameController {
         this.computer = computer;
         initializeComputerHandView();
     }
+
     private void initializeHumanHandView() {
         listViewHumanHand.setCellFactory(param -> {
             listViewHumanHand.setOrientation(Orientation.HORIZONTAL);
@@ -89,14 +93,16 @@ public class GameController {
             cell.setOnMouseClicked(event -> {
                 Card selectedCard = cell.getItem();
                 if (Objects.equals(game.getCurrentTurn(), "Human")) {
+
                     if (selectedCard != null && isPlayable(selectedCard)) {
                         topCard = selectedCard; //  Actualiza la carta superior
                         setTopCard(topCard); // actualiza imageViewTopCard
-                        wildLogic(selectedCard);
+                        wildLogic(selectedCard);// agrega la logica para las cartas especiales
                         human.removeCard(selectedCard); //  Elimina la carta del modelo
                         deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
                         listViewHumanHand.getItems().setAll(human.getHand()); //  Actualiza la vista del ListView
                         changeTurn();
+
                     } else if (selectedCard == null) {
                         System.out.println("No es una carta");
                     } else {
@@ -157,10 +163,12 @@ public class GameController {
             game.setCurrentTurn("Computer");
             imageViewHumanFlag.setVisible(false);
             imageViewComputerFlag.setVisible(true);
+            // machineLogic(); incorporacion con errores
         } else {
             game.setCurrentTurn("Human");
             imageViewComputerFlag.setVisible(false);
             imageViewHumanFlag.setVisible(true);
+
         }
     }
 
@@ -199,17 +207,69 @@ public class GameController {
                 selectedCard.getValue().equals(topCard.getValue()) ||
                 selectedCard.getColor().equals("wild");
     }
+
     private void wildLogic(Card selectedCard) {
-        String currentTurn=game.getCurrentTurn();
-        if (selectedCard.getValue().equals("wild_draw_2")&&currentTurn.equals("Human")) {
-            computer.addCard(deck.drawCard());
-            computer.addCard(deck.drawCard());
+        String currentTurn = game.getCurrentTurn();
+        if(selectedCard.getValue().equals("skip")) {changeTurn();}
+        // Mostrar selector de color si es comodín
+        if (selectedCard.getColor().equals("wild")) {
+            colorSelectionBox.setVisible(true);
+            changeTurn();
         }
-        if (selectedCard.getValue().equals("wild_draw_2")&&currentTurn.equals("Computer")) {
+        if (selectedCard.getValue().equals("wild_draw_2") && currentTurn.equals("Human")) {
+            computer.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
+            changeTurn();
+        }
+        if (selectedCard.getValue().equals("wild_draw_2") && currentTurn.equals("Computer")) {
             human.addCard(deck.drawCard());
             human.addCard(deck.drawCard());
+            changeTurn();
+        }
+        if (selectedCard.getValue().equals("wild_draw_4") && currentTurn.equals("Human")) {
+            computer.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
+
+
+        }
+        if (selectedCard.getValue().equals("wild_draw_4") && currentTurn.equals("Computer")) {
+            human.addCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+
+
         }
     }
+
+    private void machineLogic() {
+        if (!game.getCurrentTurn().equals("Computer")) return;
+
+        for (Card card : computer.getHand()) {
+
+            if (isPlayable(card)) {
+                topCard = card;
+                setTopCard(topCard);
+                wildLogic(card);
+                computer.removeCard(card);
+                deck.discardCard(card);
+                listViewComputerHand.getItems().setAll(computer.getHand());
+                changeTurn(); // vuelve al humano
+                return;
+            }
+        }
+
+        // Si ninguna carta es jugable, robar
+        Card draw = deck.drawCard();
+        computer.addCard(draw);
+        listViewComputerHand.getItems().setAll(computer.getHand());
+
+
+        changeTurn(); // vuelva al humano
+    }
+
 
     @FXML
     void onActionButtonAyuda(ActionEvent event) {
@@ -226,6 +286,35 @@ public class GameController {
     }
 
     @FXML
-    void onActionButtonSound(ActionEvent event) { SoundManager.toggleMusic("music.mp3"); }
+    void onActionButtonSound(ActionEvent event) {
+        SoundManager.toggleMusic("music.mp3");
+    }
 
+
+    @FXML
+    void onColorSelectedRed(ActionEvent event) {
+        applyWildColor("red");
+    }
+
+    @FXML
+    void onColorSelectedYellow(ActionEvent event) {
+        applyWildColor("yellow");
+    }
+
+    @FXML
+    void onColorSelectedGreen(ActionEvent event) {
+        applyWildColor("green");
+    }
+
+    @FXML
+    void onColorSelectedBlue(ActionEvent event) {
+        applyWildColor("blue");
+    }
+
+    private void applyWildColor(String color) {
+       this.topCard.setColor(color);
+        setTopCard(topCard); // actualiza la imagen
+        colorSelectionBox.setVisible(false); // oculta los botones
+        if (topCard.getValue().equals("wild")){changeTurn();} // continúa el turno
+    }
 }
