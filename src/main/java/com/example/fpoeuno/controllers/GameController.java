@@ -29,6 +29,12 @@ public class GameController {
     @FXML
     private ImageView imageViewTopCard;
 
+    @FXML
+    private ImageView imageViewHumanFlag;
+
+    @FXML
+    private ImageView imageViewComputerFlag;
+
     Game game = new Game();
     Deck deck = new Deck();
     private Player human;
@@ -79,21 +85,24 @@ public class GameController {
                 }
             };
 
-            // 👉 when the mouse is clicked
+            // When the mouse is clicked
             cell.setOnMouseClicked(event -> {
                 Card selectedCard = cell.getItem();
-                if (selectedCard != null && isPlayable(selectedCard)) {
-                    //  Actualiza la carta superior
-                    topCard = selectedCard;
-                    setTopCard(topCard); // actualiza imageViewTopCard
-
-                    //  Elimina la carta del modelo
-                    human.removeCard(selectedCard);
-
-                    //  Actualiza la vista del ListView
-                    listViewHumanHand.getItems().setAll(human.getHand());
+                if (Objects.equals(game.getCurrentTurn(), "Human")) {
+                    if (selectedCard != null && isPlayable(selectedCard)) {
+                        topCard = selectedCard; //  Actualiza la carta superior
+                        setTopCard(topCard); // actualiza imageViewTopCard
+                        human.removeCard(selectedCard); //  Elimina la carta del modelo
+                        deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
+                        listViewHumanHand.getItems().setAll(human.getHand()); //  Actualiza la vista del ListView
+                        changeTurn();
+                    } else if (selectedCard == null) {
+                        System.out.println("No es una carta");
+                    } else {
+                        System.out.println("Carta no jugable: " + selectedCard);
+                    }
                 } else {
-                    System.out.println("Carta no jugable: " + selectedCard);
+                    System.out.println("Es el turno de la máquina, no puedes jugar...");
                 }
             });
 
@@ -141,6 +150,40 @@ public class GameController {
         labelNickname.setText(human.getNickname());
     }
 
+    public void changeTurn() {
+        String currentTurn = game.getCurrentTurn();
+        if (Objects.equals(currentTurn, "Human")) {
+            game.setCurrentTurn("Computer");
+            imageViewHumanFlag.setVisible(false);
+            imageViewComputerFlag.setVisible(true);
+        } else {
+            game.setCurrentTurn("Human");
+            imageViewComputerFlag.setVisible(false);
+            imageViewHumanFlag.setVisible(true);
+        }
+    }
+
+    @FXML
+    void onActionButtonRobar(ActionEvent event) {
+        String text = "";
+        if (Objects.equals(game.getCurrentTurn(), "Human")) {
+            for (Card card : human.getHand()) {
+                if (isPlayable(card)) {
+                    text = "Puedes jugar una carta, no puedes robar...";
+                }
+            }
+            System.out.println(text);
+            if (text.isEmpty()) { // No tiene cartas para jugar...
+                Card draw = deck.drawCard();
+                human.addCard(draw);
+                changeTurn();
+                listViewHumanHand.getItems().setAll(human.getHand()); // Actualiza la vista del ListView
+            }
+        } else {
+            System.out.println("Es el turno de la máquina, no puedes robar...");
+        }
+    }
+
     @FXML
     void onActionButtonPrint(ActionEvent event) throws IOException {
         deck.printDeck();
@@ -155,5 +198,22 @@ public class GameController {
                 selectedCard.getValue().equals(topCard.getValue()) ||
                 selectedCard.getColor().equals("wild");
     }
+
+    @FXML
+    void onActionButtonAyuda(ActionEvent event) {
+        AlertHelper.showInfoAlert(
+                "Reglas",
+                "Reglas de UNO",
+                "-1. Cada jugador comienza con 5 cartas.\n" +
+                        "-2. La partida inicia con una carta aleatoria en la mesa.\n" +
+                        "-3. Juega una carta que coincida en color o número.\n" +
+                        "-4. Los comodines pueden jugarse en cualquier momento.\n" +
+                        "-5. Presiona el botón UNO antes de jugar tu última carta.\n" +
+                        "-6. Si no lo haces, tendrás 2–3 segundos o serás penalizado con una carta."
+        );
+    }
+
+    @FXML
+    void onActionButtonSound(ActionEvent event) { SoundManager.toggleMusic("music.mp3"); }
 
 }
