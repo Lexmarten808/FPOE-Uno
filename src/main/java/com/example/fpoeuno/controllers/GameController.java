@@ -92,6 +92,7 @@ public class GameController {
                     if (selectedCard != null && isPlayable(selectedCard)) {
                         topCard = selectedCard; //  Actualiza la carta superior
                         setTopCard(topCard); // actualiza imageViewTopCard
+                        wildLogic(selectedCard);
                         human.removeCard(selectedCard); //  Elimina la carta del modelo
                         deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
                         listViewHumanHand.getItems().setAll(human.getHand()); //  Actualiza la vista del ListView
@@ -197,6 +198,17 @@ public class GameController {
         return selectedCard.getColor().equals(topCard.getColor()) ||
                 selectedCard.getValue().equals(topCard.getValue()) ||
                 selectedCard.getColor().equals("wild");
+    }
+    private void wildLogic(Card selectedCard) {
+        String currentTurn=game.getCurrentTurn();
+        if (selectedCard.getValue().equals("wild_draw_2")&&currentTurn.equals("Human")) {
+            computer.addCard(deck.drawCard());
+            computer.addCard(deck.drawCard());
+        }
+        if (selectedCard.getValue().equals("wild_draw_2")&&currentTurn.equals("Computer")) {
+            human.addCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+        }
     }
 
     @FXML
