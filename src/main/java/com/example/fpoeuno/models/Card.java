@@ -1,10 +1,5 @@
 package com.example.fpoeuno.models;
 
-/**
- * Represents a single UNO card with its image URL, type, color, and number.
- * This model encapsulates all relevant data used throughout the game.
- */
-
 public class Card {
 
     private final String color;
@@ -22,8 +17,6 @@ public class Card {
     public String getImagePath() { return imagePath; }
 
     @Override
-    public String toString() {
-        return "Card{" + color + ", " + value + ", " + imagePath + "}";
-    }
+    public String toString() { return "Card{" + color + ", " + value + ", " + imagePath + "}"; }
 
 }

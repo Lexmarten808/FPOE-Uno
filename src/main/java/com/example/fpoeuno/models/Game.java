@@ -1,13 +1,19 @@
 package com.example.fpoeuno.models;
 
-/**
- * Manages the game state, including players, the deck, and initial setup.
- * Handles the flow of a basic UNO game between a human and the machine.
- */
 public class Game {
 
+    private String currentTurn = "Human";
     private String establishedColor;
     private String establishedValue;
 
-}
+    public Game() {}
 
+    public String getCurrentTurn() { return currentTurn; }
+    public String getEstablishedColor() { return establishedColor; }
+    public String getEstablishedValue() { return establishedValue; }
+
+    public void setCurrentTurn(String currentTurn) { this.currentTurn = currentTurn; }
+    public void setEstablishedColor(String establishedColor) { this.establishedColor = establishedColor; }
+    public void setEstablishedValue(String establishedValue) { this.establishedValue = establishedValue; }
+
+}

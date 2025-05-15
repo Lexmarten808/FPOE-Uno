@@ -5,10 +5,6 @@ import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
 
-/**
- * Represents the UNO deck as a stack of cards.
- * Handles deck creation, shuffling, drawing, discarding, and recycling cards when the draw pile is empty.
- */
 public class Deck {
 
     private final Stack<Card> drawPile;
@@ -54,9 +50,7 @@ public class Deck {
         return drawPile.isEmpty() ? null : drawPile.pop();
     }
 
-    public void discardCard(Card card) {
-        discardPile.push(card);
-    }
+    public void discardCard(Card card) { discardPile.push(card); }
 
     private void reshuffleFromDiscardPile() {
         if (discardPile.size() <= 1) return;
@@ -76,7 +70,6 @@ public class Deck {
 
     public Stack<Card> getDrawPile() { return drawPile; }
     public Stack<Card> getDiscardPile() { return discardPile; }
-
 
     public void printDeck() {
         System.out.println("***********draw pile");

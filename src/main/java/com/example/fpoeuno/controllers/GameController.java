@@ -1,6 +1,7 @@
 package com.example.fpoeuno.controllers;
 
 import com.example.fpoeuno.models.*;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -10,13 +11,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import java.io.IOException;
 import java.util.Objects;
 
-/**
- * Controller for the main game view.
- * Manages user interactions related to game control elements, such as sound.
- */
+import java.io.IOException;
+
 public class GameController {
 
     @FXML
@@ -50,7 +48,7 @@ public class GameController {
 
     private void showImageViewTopCard(Card topCard) {
         Image image = new Image(Objects.requireNonNull(getClass().getResource(
-                "/org/example/unolast/" + topCard.getImagePath())).toExternalForm());
+                "/com/example/fpoeuno/" + topCard.getImagePath())).toExternalForm());
         imageViewTopCard.setImage(image);
     }
 
@@ -73,7 +71,7 @@ public class GameController {
                     if (empty || card == null) {
                         setGraphic(null);
                     } else {
-                        String imagePath = "/org/example/unolast/" + card.getImagePath();
+                        String imagePath = "/com/example/fpoeuno/" + card.getImagePath();
                         Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
                         imageView.setImage(image);
                         setGraphic(imageView);
@@ -125,7 +123,7 @@ public class GameController {
                     imageView.setPreserveRatio(true);
 
                     Image image = new Image(Objects.requireNonNull(getClass().getResource(
-                            "/org/example/unolast/images/cards/card_uno.png")).toExternalForm());
+                            "/com/example/fpoeuno/images/cards/card_uno.png")).toExternalForm());
                     imageView.setImage(image);
 
                     setText(null);

@@ -8,4 +8,5 @@ module com.example.fpoeuno {
    //exports com.example.fpoeuno; // si usas Main aquí
     // Abre el paquete de controladores para permitir acceso por reflexión
     opens com.example.fpoeuno.controllers to javafx.fxml;
+    exports com.example.fpoeuno;
 }

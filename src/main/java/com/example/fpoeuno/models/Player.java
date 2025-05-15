@@ -4,12 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
-import java.util.List;
 
-/**
- * Represents a UNO player, either humar or machine, with a hand of cards.
- * Handles card drawing, playing, and logic for playable cards.
- */
 public class Player {
 
     private String nickname;
@@ -31,9 +26,7 @@ public class Player {
     public void removeCard(Card card) {
         // Elimina de la lista lógica
         this.hand.remove(card);
-
     }
-
 
     public String getNickname() { return nickname; }
     public boolean isHuman() { return isHuman; }
@@ -54,4 +47,3 @@ public class Player {
     }
 
 }
-

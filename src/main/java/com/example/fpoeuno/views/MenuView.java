@@ -1,5 +1,7 @@
 package com.example.fpoeuno.views;
 
+import com.example.fpoeuno.Main;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -10,7 +12,9 @@ import java.io.IOException;
 public class MenuView extends Stage {
 
     public MenuView() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com/example/fpoeuno/ui/uno-menu.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(
+                Main.class.getResource("menu.fxml")
+        );
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         this.setTitle("UNO - MENU");

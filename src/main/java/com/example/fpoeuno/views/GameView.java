@@ -1,8 +1,9 @@
 package com.example.fpoeuno.views;
 
+import com.example.fpoeuno.Main;
 import com.example.fpoeuno.controllers.GameController;
+
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -13,7 +14,9 @@ public class GameView extends Stage {
     private final GameController gameController;
 
     public GameView() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com/example/fpoeuno/ui/uno-game.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(
+                Main.class.getResource("game.fxml")
+        );
         Scene scene = new Scene(fxmlLoader.load());
         this.gameController = fxmlLoader.getController();
         this.setTitle("UNO - GAME");
