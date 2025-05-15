@@ -8,6 +8,10 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" style="-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fpoeuno.controllers.GameController">
@@ -24,7 +28,7 @@
             </ImageView>
          </graphic>
       </Label>
-      <Button layoutX="273.0" layoutY="283.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
+      <Button layoutX="551.0" layoutY="385.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
       <ListView fx:id="listViewComputerHand" layoutX="175.0" layoutY="30.0" prefHeight="120.0" prefWidth="800.0" />
       <ListView fx:id="listViewHumanHand" layoutX="175.0" layoutY="450.0" prefHeight="120.0" prefWidth="800.0" />
       <ImageView fx:id="imageViewTopCard" fitHeight="125.0" fitWidth="80.0" layoutX="535.0" layoutY="238.0" pickOnBounds="true" preserveRatio="true">
@@ -99,12 +103,51 @@
             </ImageView>
          </graphic>
       </Button>
-      <AnchorPane fx:id="colorSelectionBox" layoutX="18.0" layoutY="251.0" prefHeight="57.0" prefWidth="152.0" visible="false">
+      <AnchorPane fx:id="colorSelectionBox" layoutX="200.0" layoutY="243.0" visible="false">
          <children>
-            <Button layoutX="14.0" layoutY="-4.0" mnemonicParsing="false" onAction="#onColorSelectedYellow" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: yellow; -fx-background-radius: 222;" text="amarillo" />
-            <Button layoutX="14.0" layoutY="26.0" mnemonicParsing="false" onAction="#onColorSelectedBlue" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: blue; -fx-background-radius: 222;" text="azul" />
-            <Button layoutX="73.0" layoutY="-5.0" mnemonicParsing="false" onAction="#onColorSelectedRed" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: red; -fx-background-radius: 222;" text="rojo" />
-            <Button layoutX="72.0" layoutY="26.0" mnemonicParsing="false" onAction="#onColorSelectedGreen" prefHeight="30.0" prefWidth="59.0" style="-fx-background-color: green; -fx-background-radius: 222;" text="verde" />
+            <Rectangle height="114.0" stroke="WHITE" strokeType="INSIDE" strokeWidth="3.0" width="250.0">
+               <fill>
+                  <LinearGradient endX="1.0" endY="1.0">
+                     <stops>
+                        <Stop>
+                           <color>
+                              <Color red="0.3552631437778473" green="0.2153782844543457" blue="0.04440789297223091" />
+                           </color>
+                        </Stop>
+                        <Stop offset="1.0">
+                           <color>
+                              <Color red="0.2368421107530594" green="0.19188596308231354" blue="0.19188596308231354" />
+                           </color>
+                        </Stop>
+                     </stops>
+                  </LinearGradient>
+               </fill>
+            </Rectangle>
+            <Button layoutX="10.0" layoutY="45.0" mnemonicParsing="false" onAction="#onActionButtonColorYellow" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 200; -fx-background-color: #e0ca22; -fx-cursor: hand;" textFill="RED">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+            <Button layoutX="70.0" layoutY="45.0" mnemonicParsing="false" onAction="#onActionButtonColorBlue" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 200; -fx-background-color: #282dc6; -fx-cursor: hand;">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+            <Button layoutX="130.0" layoutY="45.0" mnemonicParsing="false" onAction="#onActionButtonColorRed" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 200; -fx-background-color: #C62828; -fx-cursor: hand;">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+            <Button layoutX="190.0" layoutY="45.0" mnemonicParsing="false" onAction="#onActionButtonColorGreen" prefHeight="50.0" prefWidth="50.0" style="-fx-background-radius: 200; -fx-background-color: #309e11; -fx-cursor: hand;">
+               <effect>
+                  <DropShadow />
+               </effect>
+            </Button>
+            <Label layoutX="52.0" layoutY="14.0" text="Selecciona un color" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>

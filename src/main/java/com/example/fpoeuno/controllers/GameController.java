@@ -2,6 +2,7 @@ package com.example.fpoeuno.controllers;
 
 import com.example.fpoeuno.models.*;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
@@ -12,36 +13,35 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import java.io.IOException;
 
 public class GameController {
-    @FXML
-    AnchorPane colorSelectionBox;
-    @FXML
-    private Label labelNickname;
 
-    @FXML
-    private ListView<Card> listViewHumanHand;
+    // ===== FXML COMPONENTES =====
 
-    @FXML
-    private ListView<Card> listViewComputerHand;
+    @FXML private AnchorPane colorSelectionBox;
+    @FXML private Label labelNickname;
+    @FXML private ListView<Card> listViewHumanHand;
+    @FXML private ListView<Card> listViewComputerHand;
+    @FXML private ImageView imageViewTopCard;
+    @FXML private ImageView imageViewHumanFlag;
+    @FXML private ImageView imageViewComputerFlag;
 
-    @FXML
-    private ImageView imageViewTopCard;
+    // ===== MODELOS ======
 
-    @FXML
-    private ImageView imageViewHumanFlag;
-
-    @FXML
-    private ImageView imageViewComputerFlag;
-
-    Game game = new Game();
-    Deck deck = new Deck();
+    private Game game = new Game();
+    private Deck deck = new Deck();
     private Player human;
     private Player computer;
-    Card topCard;
+    private Card topCard;
+    private Card pendingWildCard;
+    private Thread computerTurnThread;
+    private boolean computerCanPlay = true;
+
+    // ===== SETTERS PRINCIPALES =====
 
     public void setHuman(Player human) {
         this.human = human;
@@ -49,74 +49,27 @@ public class GameController {
         showLabelNickname();
     }
 
-    public void setTopCard(Card card) {
-        String currentTurn = game.getCurrentTurn();
-        this.topCard = card;
-        showImageViewTopCard(topCard);
-    }
-
-    private void showImageViewTopCard(Card topCard) {
-        Image image = new Image(Objects.requireNonNull(getClass().getResource(
-                "/com/example/fpoeuno/" + topCard.getImagePath())).toExternalForm());
-        imageViewTopCard.setImage(image);
-    }
-
     public void setComputer(Player computer) {
         this.computer = computer;
+        initializeComputerTurnThread();
         initializeComputerHandView();
     }
 
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
+    public void setTopCard(Card card) {
+        this.topCard = card;
+        showImageViewTopCard(topCard);
+        establishGameValues(topCard);
+    }
+
+    // ===== INICIALIZADORES =====
+
     private void initializeHumanHandView() {
-        listViewHumanHand.setCellFactory(param -> {
-            listViewHumanHand.setOrientation(Orientation.HORIZONTAL);
-
-            ImageView imageView = new ImageView();
-            imageView.setFitWidth(60);
-            imageView.setFitHeight(90);
-
-            ListCell<Card> cell = new ListCell<>() {
-                @Override
-                protected void updateItem(Card card, boolean empty) {
-                    super.updateItem(card, empty);
-                    if (empty || card == null) {
-                        setGraphic(null);
-                    } else {
-                        String imagePath = "/com/example/fpoeuno/" + card.getImagePath();
-                        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-                        imageView.setImage(image);
-                        setGraphic(imageView);
-                    }
-                }
-            };
-
-            // When the mouse is clicked
-            cell.setOnMouseClicked(event -> {
-                Card selectedCard = cell.getItem();
-                if (Objects.equals(game.getCurrentTurn(), "Human")) {
-
-                    if (selectedCard != null && isPlayable(selectedCard)) {
-                        topCard = selectedCard; //  Actualiza la carta superior
-                        setTopCard(topCard); // actualiza imageViewTopCard
-                        wildLogic(selectedCard);// agrega la logica para las cartas especiales
-                        human.removeCard(selectedCard); //  Elimina la carta del modelo
-                        deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
-                        listViewHumanHand.getItems().setAll(human.getHand()); //  Actualiza la vista del ListView
-                        changeTurn();
-
-                    } else if (selectedCard == null) {
-                        System.out.println("No es una carta");
-                    } else {
-                        System.out.println("Carta no jugable: " + selectedCard);
-                    }
-                } else {
-                    System.out.println("Es el turno de la máquina, no puedes jugar...");
-                }
-            });
-
-            return cell;
-        });
-
-        // Mostrar cartas del jugador al inicializar
+        listViewHumanHand.setOrientation(Orientation.HORIZONTAL);
+        listViewHumanHand.setCellFactory(param -> createHumanCardCell());
         listViewHumanHand.getItems().setAll(human.getHand());
     }
 
@@ -125,52 +78,20 @@ public class GameController {
         listViewComputerHand.setItems(computer.getHand());
 
         listViewComputerHand.setCellFactory(lv -> new ListCell<Card>() {
-            private final ImageView imageView = new ImageView();
+            private final ImageView imageView = createCardImageView();
 
             @Override
             protected void updateItem(Card card, boolean empty) {
                 super.updateItem(card, empty);
-                if (empty || card == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    imageView.setFitWidth(100);
-                    imageView.setFitHeight(100);
-                    imageView.setPreserveRatio(true);
-
-                    Image image = new Image(Objects.requireNonNull(getClass().getResource(
-                            "/com/example/fpoeuno/images/cards/card_uno.png")).toExternalForm());
-                    imageView.setImage(image);
-
-                    setText(null);
-                    setGraphic(imageView);
+                setGraphic(empty || card == null ? null : imageView);
+                if (!empty && card != null) {
+                    imageView.setImage(loadImage("/com/example/fpoeuno/images/cards/card_uno.png"));
                 }
             }
         });
     }
 
-    public void setDeck(Deck deck) {
-        this.deck = deck;
-    }
-
-    public void showLabelNickname() {
-        labelNickname.setText(human.getNickname());
-    }
-
-    public void changeTurn() {
-        String currentTurn = game.getCurrentTurn();
-        if (Objects.equals(currentTurn, "Human")) {
-            game.setCurrentTurn("Computer");
-            imageViewHumanFlag.setVisible(false);
-            imageViewComputerFlag.setVisible(true);
-            // machineLogic(); incorporacion con errores
-        } else {
-            game.setCurrentTurn("Human");
-            imageViewComputerFlag.setVisible(false);
-            imageViewHumanFlag.setVisible(true);
-
-        }
-    }
+    // ===== EVENTOS PRINCIPALES =====
 
     @FXML
     void onActionButtonRobar(ActionEvent event) {
@@ -186,7 +107,7 @@ public class GameController {
                 Card draw = deck.drawCard();
                 human.addCard(draw);
                 changeTurn();
-                listViewHumanHand.getItems().setAll(human.getHand()); // Actualiza la vista del ListView
+                refreshHumanHand();
             }
         } else {
             System.out.println("Es el turno de la máquina, no puedes robar...");
@@ -201,75 +122,6 @@ public class GameController {
         System.out.println("***********computer hand");
         computer.printHand();
     }
-
-    private boolean isPlayable(Card selectedCard) {
-        return selectedCard.getColor().equals(topCard.getColor()) ||
-                selectedCard.getValue().equals(topCard.getValue()) ||
-                selectedCard.getColor().equals("wild");
-    }
-
-    private void wildLogic(Card selectedCard) {
-        String currentTurn = game.getCurrentTurn();
-        if(selectedCard.getValue().equals("skip")) {changeTurn();}
-        // Mostrar selector de color si es comodín
-        if (selectedCard.getColor().equals("wild")) {
-            colorSelectionBox.setVisible(true);
-            changeTurn();
-        }
-        if (selectedCard.getValue().equals("wild_draw_2") && currentTurn.equals("Human")) {
-            computer.addCard(deck.drawCard());
-            computer.addCard(deck.drawCard());
-            changeTurn();
-        }
-        if (selectedCard.getValue().equals("wild_draw_2") && currentTurn.equals("Computer")) {
-            human.addCard(deck.drawCard());
-            human.addCard(deck.drawCard());
-            changeTurn();
-        }
-        if (selectedCard.getValue().equals("wild_draw_4") && currentTurn.equals("Human")) {
-            computer.addCard(deck.drawCard());
-            computer.addCard(deck.drawCard());
-            computer.addCard(deck.drawCard());
-            computer.addCard(deck.drawCard());
-
-
-        }
-        if (selectedCard.getValue().equals("wild_draw_4") && currentTurn.equals("Computer")) {
-            human.addCard(deck.drawCard());
-            human.addCard(deck.drawCard());
-            human.addCard(deck.drawCard());
-            human.addCard(deck.drawCard());
-
-
-        }
-    }
-
-    private void machineLogic() {
-        if (!game.getCurrentTurn().equals("Computer")) return;
-
-        for (Card card : computer.getHand()) {
-
-            if (isPlayable(card)) {
-                topCard = card;
-                setTopCard(topCard);
-                wildLogic(card);
-                computer.removeCard(card);
-                deck.discardCard(card);
-                listViewComputerHand.getItems().setAll(computer.getHand());
-                changeTurn(); // vuelve al humano
-                return;
-            }
-        }
-
-        // Si ninguna carta es jugable, robar
-        Card draw = deck.drawCard();
-        computer.addCard(draw);
-        listViewComputerHand.getItems().setAll(computer.getHand());
-
-
-        changeTurn(); // vuelva al humano
-    }
-
 
     @FXML
     void onActionButtonAyuda(ActionEvent event) {
@@ -290,31 +142,266 @@ public class GameController {
         SoundManager.toggleMusic("music.mp3");
     }
 
+    // ===== SELECCIÓN DE COLOR =====
 
     @FXML
-    void onColorSelectedRed(ActionEvent event) {
-        applyWildColor("red");
-    }
-
-    @FXML
-    void onColorSelectedYellow(ActionEvent event) {
+    void onActionButtonColorYellow(ActionEvent event) {
         applyWildColor("yellow");
     }
 
     @FXML
-    void onColorSelectedGreen(ActionEvent event) {
-        applyWildColor("green");
-    }
-
-    @FXML
-    void onColorSelectedBlue(ActionEvent event) {
+    void onActionButtonColorBlue(ActionEvent event) {
         applyWildColor("blue");
     }
 
-    private void applyWildColor(String color) {
-       this.topCard.setColor(color);
-        setTopCard(topCard); // actualiza la imagen
-        colorSelectionBox.setVisible(false); // oculta los botones
-        if (topCard.getValue().equals("wild")){changeTurn();} // continúa el turno
+    @FXML
+    void onActionButtonColorRed(ActionEvent event) {
+        applyWildColor("red");
     }
+
+    @FXML
+    void onActionButtonColorGreen(ActionEvent event) {
+        applyWildColor("green");
+    }
+
+    private void applyWildColor(String color) {
+        if (pendingWildCard == null) return;
+
+        pendingWildCard.setColor(color);
+        setTopCard(pendingWildCard);
+        colorSelectionBox.setVisible(false);
+
+        String value = pendingWildCard.getValue();
+        Player target = game.getCurrentTurn().equals("Human") ? computer : human;
+
+        if (value.equals("wild_draw_2")) {
+            target.addCard(deck.drawCard());
+            target.addCard(deck.drawCard());
+        } else if (value.equals("wild_draw_4")) {
+            for (int i = 0; i < 4; i++) target.addCard(deck.drawCard());
+        }
+
+        refreshBothHands();
+        pendingWildCard = null;
+        changeTurn();
+    }
+
+    // ===== LÓGICA DE JUEGO =====
+
+    private void handleHumanCardPlay(Card selectedCard) {
+        if (!isHumanTurn()) {
+            System.out.println("Es el turno de la máquina, no puedes jugar...");
+            return;
+        }
+
+        if (selectedCard == null) {
+            System.out.println("No es una carta válida.");
+            return;
+        }
+
+        if (!isPlayable(selectedCard)) {
+            System.out.println("Carta no jugable: " + selectedCard);
+            return;
+        }
+
+        topCard = selectedCard;
+        setTopCard(topCard);
+        handleWildCardLogic(selectedCard);
+        human.removeCard(selectedCard);
+        deck.discardCard(selectedCard);
+        refreshHumanHand();
+        changeTurn();
+    }
+
+    private void handleWildCardLogic(Card card) {
+        String value = card.getValue();
+        String color = card.getColor();
+        String currentTurn = game.getCurrentTurn();
+
+        if (value.equals("skip")) {
+            changeTurn();
+            return;
+        }
+
+        if (color.equals("wild")) {
+            colorSelectionBox.setVisible(true);
+            pendingWildCard = card;
+            return;
+        }
+
+        if (value.equals("wild_draw_2")) {
+            Player target = currentTurn.equals("Human") ? computer : human;
+            target.addCard(deck.drawCard());
+            target.addCard(deck.drawCard());
+        }
+    }
+
+    private void machineLogic() {
+        if (!game.getCurrentTurn().equals("Computer")) return;
+
+        for (Card card : computer.getHand()) {
+            if (isPlayable(card)) {
+                topCard = card;
+                setTopCard(topCard);
+                handleWildCardLogic(card);
+                computer.removeCard(card);
+                deck.discardCard(card);
+                refreshComputerHand();
+                changeTurn();
+                return;
+            }
+        }
+
+        computer.addCard(deck.drawCard());
+        refreshComputerHand();
+        changeTurn();
+    }
+
+    // ===== MACHINE THREAD =====
+
+    public void initializeComputerTurnThread() {
+        computerTurnThread = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000); // Espera 5 segundos
+
+                    if ("Computer".equals(game.getCurrentTurn()) && computerCanPlay) {
+                        computerCanPlay = false;
+                        Platform.runLater(() -> {
+                            playComputerTurn();
+                            changeTurn();
+                            computerCanPlay = true;
+                        });
+                    } else {
+                        System.out.println("No es el turno de la computadora.");
+                    }
+                } catch (InterruptedException ex) {
+                    System.out.println("Hilo de la computadora interrumpido.");
+                    Thread.currentThread().interrupt();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        computerTurnThread.setDaemon(true); // Se detiene con la aplicación
+        computerTurnThread.start();
+    }
+
+    private void playComputerTurn() {
+        System.out.println("La computadora juega su turno...");
+
+        boolean played = false;
+
+        System.out.println("***********computer hand: antes de jugar");
+        computer.printHand();
+
+        for (Card selectedCard : new ArrayList<>(computer.getHand())) {
+            if (selectedCard != null && isPlayable(selectedCard)) {
+                topCard = selectedCard; //  Actualiza la carta superior
+                setTopCard(topCard); // actualiza imageViewTopCard
+                computer.removeCard(selectedCard); //  Elimina la carta del modelo
+                deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
+                played = true;
+                break;
+            }
+        }
+
+        if (!played) {
+            Card draw = deck.drawCard();
+            computer.addCard(draw);
+        }
+
+        System.out.println("***********computer hand: después de jugar");
+        computer.printHand();
+    }
+
+    public void stopComputerTurnThread() {
+        if (computerTurnThread != null && computerTurnThread.isAlive()) {
+            computerTurnThread.interrupt();
+        }
+    }
+
+    // ===== UTILIDADES =====
+
+    private boolean isPlayable(Card selectedCard) {
+        return selectedCard.getColor().equals(game.getEstablishedColor()) ||
+                selectedCard.getValue().equals(game.getEstablishedValue()) ||
+                selectedCard.getColor().equals("wild");
+    }
+
+    private boolean isHumanTurn() {
+        return game.getCurrentTurn().equals("Human");
+    }
+
+    public void changeTurn() {
+        boolean isHumanTurn = game.getCurrentTurn().equals("Human");
+        game.setCurrentTurn(isHumanTurn ? "Computer" : "Human");
+        imageViewHumanFlag.setVisible(!isHumanTurn);
+        imageViewComputerFlag.setVisible(isHumanTurn);
+    }
+
+    private void refreshHumanHand() {
+        listViewHumanHand.getItems().setAll(human.getHand());
+    }
+
+    private void refreshComputerHand() {
+        listViewComputerHand.getItems().setAll(computer.getHand());
+    }
+
+    private void refreshBothHands() {
+        listViewHumanHand.getItems().setAll(human.getHand());
+        listViewComputerHand.getItems().setAll(computer.getHand());
+    }
+
+    private void showLabelNickname() {
+        labelNickname.setText(human.getNickname());
+    }
+
+    private void updateTopCardImage(Card card) {
+        imageViewTopCard.setImage(loadImage("/com/example/fpoeuno/" + card.getImagePath()));
+    }
+
+    private Image loadImage(String path) {
+        return new Image(Objects.requireNonNull(getClass().getResource(path)).toExternalForm());
+    }
+
+    private ImageView createCardImageView() {
+        ImageView imageView = new ImageView();
+        imageView.setFitWidth(100);
+        imageView.setFitHeight(100);
+        imageView.setPreserveRatio(true);
+        return imageView;
+    }
+
+    private ListCell<Card> createHumanCardCell() {
+        ImageView imageView = createCardImageView();
+        ListCell<Card> cell = new ListCell<>() {
+            @Override
+            protected void updateItem(Card card, boolean empty) {
+                super.updateItem(card, empty);
+                if (empty || card == null) {
+                    setGraphic(null);
+                } else {
+                    imageView.setImage(loadImage("/com/example/fpoeuno/" + card.getImagePath()));
+                    setGraphic(imageView);
+                }
+            }
+        };
+
+        cell.setOnMouseClicked(mouseEvent -> handleHumanCardPlay(cell.getItem()));
+        return cell;
+    }
+
+    private void showImageViewTopCard(Card topCard) {
+        Image image = new Image(Objects.requireNonNull(getClass().getResource(
+                "/com/example/fpoeuno/" + topCard.getImagePath())).toExternalForm());
+        imageViewTopCard.setImage(image);
+    }
+
+    private void establishGameValues(Card card) {
+        game.setEstablishedValue(card.getValue());
+        game.setEstablishedColor(card.getColor());
+    }
+
 }
