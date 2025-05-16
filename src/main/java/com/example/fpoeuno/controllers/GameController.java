@@ -15,9 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import java.io.IOException;
 
@@ -68,6 +66,35 @@ public class GameController {
         showImageViewTopCard(topCard);
         establishGameValues(topCard);
         buttonGameColor.setStyle(currentColor());
+
+        // condicional, SI la top card es la primera carta
+        if (deck.getDiscardPile().isEmpty()) { // Si el mazo aún no tiene cartas descartadas, es la inicial
+            switch (topCard.getValue()) {
+                case "wild_draw_4":
+                    System.out.println("La primera carta es +4. El jugador roba 4 cartas.");
+                    for (int i = 0; i < 4; i++) human.addCard(deck.drawCard());
+                    refreshHumanHand();
+                    break;
+
+                case "wild_draw_2":
+                    System.out.println("La primera carta es +2. El jugador roba 2 cartas.");
+                    for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+                    refreshHumanHand();
+                    break;
+
+                case "skip":
+                    System.out.println("La primera carta es bloqueo. Se salta el turno del jugador.");
+                    changeTurn(); // Cambia el turno al computador
+                    break;
+
+                case "wild":
+                    System.out.println("La primera carta es comodín. Se debe elegir un color.");
+                    colorSelectionBox.setVisible(true);
+                    pendingWildCard = topCard;
+                    break;
+            }
+        }
+
     }
 
     // ===== INICIALIZADORES =====
@@ -176,6 +203,7 @@ public class GameController {
     // ===== LÓGICA DE JUEGO =====
 
     private void handleHumanCardPlay(Card selectedCard) {
+
         unoBox.setVisible(false);
         if (!isHumanTurn()) {
             System.out.println("Es el turno de la máquina, no puedes jugar...");
@@ -492,5 +520,8 @@ public class GameController {
             System.out.println("No puedes presionar UNO ahora.");
         }
     }
+
+
+
 
 }
