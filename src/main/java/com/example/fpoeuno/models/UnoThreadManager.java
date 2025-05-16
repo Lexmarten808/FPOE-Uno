@@ -14,7 +14,7 @@ public class UnoThreadManager {
 
         thread = new Thread(() -> {
             try {
-                Thread.sleep(5000); // Espera 5 segundos
+                Thread.sleep(4000); // Espera 4 segundos
 
                 if (!unoPressed) {
                     Platform.runLater(() -> onPenalty.accept(player));
