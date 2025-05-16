@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Orientation;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -14,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class GameController {
     // ===== FXML COMPONENTES =====
 
     @FXML private AnchorPane colorSelectionBox;
+    @FXML private Button buttonGameColor;
     @FXML private Label labelNickname;
     @FXML private ListView<Card> listViewHumanHand;
     @FXML private ListView<Card> listViewComputerHand;
@@ -63,6 +66,7 @@ public class GameController {
         this.topCard = card;
         showImageViewTopCard(topCard);
         establishGameValues(topCard);
+        buttonGameColor.setStyle(currentColor());
     }
 
     // ===== INICIALIZADORES =====
@@ -97,6 +101,10 @@ public class GameController {
     void onActionButtonRobar(ActionEvent event) {
         String text = "";
         if (Objects.equals(game.getCurrentTurn(), "Human")) {
+            if (pendingWildCard != null) {
+                System.out.println("Primero selecciona un color antes de robar.");
+                return;
+            }
             for (Card card : human.getHand()) {
                 if (isPlayable(card)) {
                     text = "Puedes jugar una carta, no puedes robar...";
@@ -164,33 +172,16 @@ public class GameController {
         applyWildColor("green");
     }
 
-    private void applyWildColor(String color) {
-        if (pendingWildCard == null) return;
-
-        pendingWildCard.setColor(color);
-        setTopCard(pendingWildCard);
-        colorSelectionBox.setVisible(false);
-
-        String value = pendingWildCard.getValue();
-        Player target = game.getCurrentTurn().equals("Human") ? computer : human;
-
-        if (value.equals("wild_draw_2")) {
-            target.addCard(deck.drawCard());
-            target.addCard(deck.drawCard());
-        } else if (value.equals("wild_draw_4")) {
-            for (int i = 0; i < 4; i++) target.addCard(deck.drawCard());
-        }
-
-        refreshBothHands();
-        pendingWildCard = null;
-        changeTurn();
-    }
-
     // ===== LÓGICA DE JUEGO =====
 
     private void handleHumanCardPlay(Card selectedCard) {
         if (!isHumanTurn()) {
             System.out.println("Es el turno de la máquina, no puedes jugar...");
+            return;
+        }
+
+        if (pendingWildCard != null) {
+            System.out.println("Primero selecciona un color antes de seguir jugando.");
             return;
         }
 
@@ -210,7 +201,11 @@ public class GameController {
         human.removeCard(selectedCard);
         deck.discardCard(selectedCard);
         refreshHumanHand();
-        changeTurn();
+
+        // Solo cambiar turno si no es un comodín
+        if (pendingWildCard == null) {
+            changeTurn();
+        }
     }
 
     private void handleWildCardLogic(Card card) {
@@ -219,6 +214,7 @@ public class GameController {
         String currentTurn = game.getCurrentTurn();
 
         if (value.equals("skip")) {
+            establishGameValues(card);
             changeTurn();
             return;
         }
@@ -231,29 +227,31 @@ public class GameController {
 
         if (value.equals("wild_draw_2")) {
             Player target = currentTurn.equals("Human") ? computer : human;
-            target.addCard(deck.drawCard());
-            target.addCard(deck.drawCard());
+            for (int i = 0; i < 2; i++) target.addCard(deck.drawCard());
+            System.out.println("Efecto +2 aplicado al jugador: " + target.getNickname());
         }
     }
 
-    private void machineLogic() {
-        if (!game.getCurrentTurn().equals("Computer")) return;
+    private void applyWildColor(String color) {
+        if (pendingWildCard == null) return;
 
-        for (Card card : computer.getHand()) {
-            if (isPlayable(card)) {
-                topCard = card;
-                setTopCard(topCard);
-                handleWildCardLogic(card);
-                computer.removeCard(card);
-                deck.discardCard(card);
-                refreshComputerHand();
-                changeTurn();
-                return;
-            }
+        System.out.println("Color elegido por el usuario: " + color);
+
+        pendingWildCard.setColor(color);
+        setTopCard(pendingWildCard);
+        colorSelectionBox.setVisible(false);
+
+        String value = pendingWildCard.getValue();
+        establishGameValues(pendingWildCard);
+
+        Player target = game.getCurrentTurn().equals("Human") ? computer : human;
+
+        if (value.equals("wild_draw_4")) {
+            for (int i = 0; i < 4; i++) target.addCard(deck.drawCard());
+            System.out.println("Efecto +4 aplicado al jugador: " + target.getNickname());
         }
 
-        computer.addCard(deck.drawCard());
-        refreshComputerHand();
+        pendingWildCard = null;
         changeTurn();
     }
 
@@ -268,8 +266,12 @@ public class GameController {
                     if ("Computer".equals(game.getCurrentTurn()) && computerCanPlay) {
                         computerCanPlay = false;
                         Platform.runLater(() -> {
+                            if (pendingWildCard != null) {
+                                System.out.println("Esperando selección de color. Máquina no puede jugar.");
+                                return;
+                            }
+
                             playComputerTurn();
-                            changeTurn();
                             computerCanPlay = true;
                         });
                     } else {
@@ -289,31 +291,74 @@ public class GameController {
     }
 
     private void playComputerTurn() {
-        System.out.println("La computadora juega su turno...");
+        if (pendingWildCard != null) {
+            System.out.println("Comodín sin resolver, la máquina espera...");
+            return;
+        }
+
+        System.out.println("=== TURNO DE LA COMPUTADORA ===");
+        computer.printHand();
+        System.out.println("Carta superior actual: " + topCard);
 
         boolean played = false;
 
-        System.out.println("***********computer hand: antes de jugar");
-        computer.printHand();
+        List<Card> hand = new ArrayList<>(computer.getHand());
 
-        for (Card selectedCard : new ArrayList<>(computer.getHand())) {
-            if (selectedCard != null && isPlayable(selectedCard)) {
-                topCard = selectedCard; //  Actualiza la carta superior
-                setTopCard(topCard); // actualiza imageViewTopCard
-                computer.removeCard(selectedCard); //  Elimina la carta del modelo
-                deck.discardCard(selectedCard); // Agregamos la carta jugada a la pila de descarte
+        for (Card selectedCard : hand) {
+            if (isPlayable(selectedCard)) {
+                System.out.println("La computadora juega: " + selectedCard);
+
+                computer.removeCard(selectedCard); //  Tomar la carta de la mano
+                deck.discardCard(selectedCard); // Ponerla en la pila de descarte
+                topCard = selectedCard; //
+                setTopCard(topCard); // Mostrarla como carta superior
+                establishGameValues(topCard); // Establecer el estado del juego
                 played = true;
+
+                // === comodines ===
+                String value = selectedCard.getValue();
+                String color = selectedCard.getColor();
+
+                if (selectedCard.getColor().equals("wild")) {
+                    String chosenColor = chooseComputerColor(computer.getHand());
+                    selectedCard.setColor(chosenColor);
+                    game.setEstablishedColor(chosenColor);
+                    game.setEstablishedValue("wild");
+                    buttonGameColor.setStyle(currentColor());
+                    System.out.println("La computadora elige el color: " + chosenColor);
+
+                    if (value.equals("wild_draw_4")) {
+                        for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+                        System.out.println("Efecto +4 aplicado al humano.");
+                        refreshHumanHand();
+                        changeTurn();
+                        return;
+                    }
+                } else if (value.equals("wild_draw_2")) {
+                    for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+                    System.out.println("Efecto +2 aplicado al humano.");
+                    refreshHumanHand();
+                    changeTurn();
+                    return;
+                } else if (value.equals("skip")) {
+                    System.out.println("Turno del jugador saltado.");
+                    refreshHumanHand();
+                    return;
+                }
                 break;
             }
         }
 
         if (!played) {
+            System.out.println("La computadora no puede jugar. Roba una carta.");
             Card draw = deck.drawCard();
             computer.addCard(draw);
         }
 
         System.out.println("***********computer hand: después de jugar");
         computer.printHand();
+        // refreshBothHands();
+        changeTurn();
     }
 
     public void stopComputerTurnThread() {
@@ -402,6 +447,27 @@ public class GameController {
     private void establishGameValues(Card card) {
         game.setEstablishedValue(card.getValue());
         game.setEstablishedColor(card.getColor());
+        buttonGameColor.setStyle(currentColor());
+    }
+
+    private String currentColor() {
+        return switch (game.getEstablishedColor()) {
+            case "red" -> "-fx-background-color: #C62828";
+            case "blue" -> "-fx-background-color: #282dc6";
+            case "green" -> "-fx-background-color: #309e11";
+            case "yellow" -> "-fx-background-color: #e0ca22";
+            default -> "-fx-background-color: gray";
+        };
+    }
+
+    private String chooseComputerColor(List<Card> hand) {
+        for (Card card : hand) {
+            String color = card.getColor();
+            if (!color.equals("wild")) {
+                return color;
+            }
+        }
+        return "red"; // color por defecto si no hay cartas de color
     }
 
 }
