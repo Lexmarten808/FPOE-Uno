@@ -37,13 +37,16 @@ public class MenuController {
         Card topCard = deck.drawCard();
         deck.discardCard(topCard);
 
+
         GameView gameView = GameView.getInstance();
+
         gameView.show();
 
         gameView.getController().setHuman(human);
         gameView.getController().setComputer(computer);
         gameView.getController().setDeck(deck);
         gameView.getController().setTopCard(topCard);
+        gameView.getController().firstCardLogic(topCard);//logica de la primera carta
 
         Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         currentStage.close();

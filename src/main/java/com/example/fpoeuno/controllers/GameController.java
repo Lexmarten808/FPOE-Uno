@@ -15,24 +15,31 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import java.io.IOException;
 
 public class GameController {
 
     // ===== FXML COMPONENTES =====
-    @FXML private VBox unoBox;
-    @FXML private AnchorPane colorSelectionBox;
-    @FXML private Button buttonGameColor;
-    @FXML private Label labelNickname;
-    @FXML private ListView<Card> listViewHumanHand;
-    @FXML private ListView<Card> listViewComputerHand;
-    @FXML private ImageView imageViewTopCard;
-    @FXML private ImageView imageViewHumanFlag;
-    @FXML private ImageView imageViewComputerFlag;
+    @FXML
+    private VBox unoBox;
+    @FXML
+    private AnchorPane colorSelectionBox;
+    @FXML
+    private Button buttonGameColor;
+    @FXML
+    private Label labelNickname;
+    @FXML
+    private ListView<Card> listViewHumanHand;
+    @FXML
+    private ListView<Card> listViewComputerHand;
+    @FXML
+    private ImageView imageViewTopCard;
+    @FXML
+    private ImageView imageViewHumanFlag;
+    @FXML
+    private ImageView imageViewComputerFlag;
 
     // ===== MODELOS ======
     private UnoThreadManager unoThreadManager = new UnoThreadManager();
@@ -68,11 +75,41 @@ public class GameController {
         showImageViewTopCard(topCard);
         establishGameValues(topCard);
         buttonGameColor.setStyle(currentColor());
+
+        // condicional, SI la top card es la primera carta
+        if (deck.getDiscardPile().isEmpty()) { // Si el mazo aún no tiene cartas descartadas, es la inicial
+            switch (topCard.getValue()) {
+                case "wild_draw_4":
+                    System.out.println("La primera carta es +4. El jugador roba 4 cartas.");
+                    for (int i = 0; i < 4; i++) human.addCard(deck.drawCard());
+                    refreshHumanHand();
+                    break;
+
+                case "wild_draw_2":
+                    System.out.println("La primera carta es +2. El jugador roba 2 cartas.");
+                    for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+                    refreshHumanHand();
+                    break;
+
+                case "skip":
+                    System.out.println("La primera carta es bloqueo. Se salta el turno del jugador.");
+                    changeTurn(); // Cambia el turno al computador
+                    break;
+
+                case "wild":
+                    System.out.println("La primera carta es comodín. Se debe elegir un color.");
+                    colorSelectionBox.setVisible(true);
+                    pendingWildCard = topCard;
+                    break;
+            }
+        }
+
     }
 
     // ===== INICIALIZADORES =====
 
     private void initializeHumanHandView() {
+        unoBox.setVisible(false);
         listViewHumanHand.setOrientation(Orientation.HORIZONTAL);
         listViewHumanHand.setCellFactory(param -> createHumanCardCell());
         listViewHumanHand.getItems().setAll(human.getHand());
@@ -130,6 +167,10 @@ public class GameController {
         human.printHand();
         System.out.println("***********computer hand");
         computer.printHand();
+        System.out.println("***********SOME INFO:");
+        System.out.println(game.getCurrentTurn());
+        System.out.println(game.getEstablishedColor());
+        System.out.println(game.getEstablishedValue());
     }
 
     @FXML
@@ -176,7 +217,7 @@ public class GameController {
     // ===== LÓGICA DE JUEGO =====
 
     private void handleHumanCardPlay(Card selectedCard) {
-        unoBox.setVisible(false);
+
         if (!isHumanTurn()) {
             System.out.println("Es el turno de la máquina, no puedes jugar...");
             return;
@@ -196,24 +237,42 @@ public class GameController {
             System.out.println("Carta no jugable: " + selectedCard);
             return;
         }
+
         if (human.getHand().size() == 2) {
             unoBox.setVisible(true);
+            computerCanPlay = false;
             System.out.println("presiona UNO");
             unoThreadManager.start(human, player -> {
                 System.out.println("No presionó UNO a tiempo. Se penaliza a " + player.getNickname());
                 player.addCard(deck.drawCard());
+                unoBox.setVisible(false);
+                computerCanPlay = true;
                 refreshHumanHand();
-                changeTurn();
+                if (game.getCurrentTurn().equals("Human")) {
+                    changeTurn();
+                };
             });
         }
 
         topCard = selectedCard;
         setTopCard(topCard);
+
+        if (human.getHand().size() == 1){
+            human.removeCard(selectedCard);
+            refreshHumanHand();
+            System.out.println("Juego terminado, " + human.getNickname() + " gana!");
+            AlertHelper.showInfoAlert(
+                    "GANADOR: " + human.getNickname(),
+                    "JUEGO TERMINADO",
+                    "Juego terminado, " + human.getNickname() + " gana!"
+            );
+            System.exit(0);
+        }
+
         handleWildCardLogic(selectedCard);
         human.removeCard(selectedCard);
         deck.discardCard(selectedCard);
         refreshHumanHand();
-
 
         // Solo cambiar turno si no es un comodín
         if (pendingWildCard == null) {
@@ -250,12 +309,13 @@ public class GameController {
 
         System.out.println("Color elegido por el usuario: " + color);
 
-        pendingWildCard.setColor(color);
         setTopCard(pendingWildCard);
         colorSelectionBox.setVisible(false);
 
         String value = pendingWildCard.getValue();
-        establishGameValues(pendingWildCard);
+        game.setEstablishedColor(color);
+        game.setEstablishedValue(pendingWildCard.getValue());
+        buttonGameColor.setStyle(currentColor());
 
         Player target = game.getCurrentTurn().equals("Human") ? computer : human;
 
@@ -319,12 +379,37 @@ public class GameController {
 
         for (Card selectedCard : hand) {
             if (isPlayable(selectedCard)) {
+                if (computer.getHand().size() == 2) {
+                    unoBox.setVisible(true);
+                    computerCanPlay = false;
+                    System.out.println("presiona UNO");
+                    unoThreadManager.start(computer, player -> {
+                        System.out.println("No presionó UNO a tiempo. No hay penalización para la máquina.");
+                        unoBox.setVisible(false);
+                        computerCanPlay = true;
+                    });
+                }
                 System.out.println("La computadora juega: " + selectedCard);
+
+                topCard = selectedCard; //
+                setTopCard(topCard); // Mostrarla como carta superior
+
+                if (computer.getHand().size() == 1){
+                    computer.removeCard(selectedCard);
+                    refreshComputerHand();
+                    System.out.println("Juego terminado, " + computer.getNickname() + " gana!");
+                    AlertHelper.showInfoAlert(
+                            "GANADOR: " + computer.getNickname(),
+                            "JUEGO TERMINADO",
+                            "Juego terminado, " + computer.getNickname() + " gana!"
+                    );
+                    System.exit(0);
+                }
 
                 computer.removeCard(selectedCard); //  Tomar la carta de la mano
                 deck.discardCard(selectedCard); // Ponerla en la pila de descarte
-                topCard = selectedCard; //
-                setTopCard(topCard); // Mostrarla como carta superior
+
+
                 establishGameValues(topCard); // Establecer el estado del juego
                 played = true;
 
@@ -334,14 +419,13 @@ public class GameController {
 
                 if (selectedCard.getColor().equals("wild")) {
                     String chosenColor = chooseComputerColor(computer.getHand());
-                    selectedCard.setColor(chosenColor);
                     game.setEstablishedColor(chosenColor);
                     game.setEstablishedValue("wild");
                     buttonGameColor.setStyle(currentColor());
                     System.out.println("La computadora elige el color: " + chosenColor);
 
                     if (value.equals("wild_draw_4")) {
-                        for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+                        for (int i = 0; i < 4; i++) human.addCard(deck.drawCard());
                         System.out.println("Efecto +4 aplicado al humano.");
                         refreshHumanHand();
                         changeTurn();
@@ -447,7 +531,7 @@ public class GameController {
             }
         };
 
-        cell.setOnMouseClicked(mouseEvent -> handleHumanCardPlay(cell.getItem()));
+        cell.setOnMouseClicked(mouseEvent -> handleHumanCardPlay(cell.getItem()));{}
         return cell;
     }
 
@@ -488,9 +572,57 @@ public class GameController {
         if (human.getHand().size() == 1 && unoThreadManager.isUNOActive()) {
             unoThreadManager.pressUNO();
             System.out.println("¡UNO presionado a tiempo!");
+            computerCanPlay = true;
+            unoBox.setVisible(false);
+        } else if (computer.getHand().size() == 1 && unoThreadManager.isUNOActive()) {
+            unoThreadManager.pressUNO();
+            System.out.println("¡UNO presionado a tiempo, penalización de 1 carta para la máquina!");
+            Card draw = deck.drawCard();
+            computer.addCard(draw);
+            unoBox.setVisible(false);
         } else {
             System.out.println("No puedes presionar UNO ahora.");
         }
     }
 
+    public void firstCardLogic(Card card) {
+        System.out.println("APLICANDO LA LOGICA DE LA TOP CARD");
+        String value = card.getValue();
+        String color = card.getColor();
+        String currentTurn = game.getCurrentTurn();
+
+        if (value.equals("skip")) {
+            establishGameValues(card);
+            changeTurn();
+            System.out.println("APLICANDO LA LOGICA DE SKIP CARD");
+            return;
+        }
+
+
+        if (value.equals("wild_draw_2")) {
+            for (int i = 0; i < 2; i++) human.addCard(deck.drawCard());
+            refreshHumanHand();
+            System.out.println("Efecto +2 aplicado al jugador: " + human.getNickname());
+            System.out.println("APLICANDO LA LOGICA DE LA WILD+2 CARD");
+        }
+        if (color.equals("wild")) {
+            String chosenColor = chooseComputerColor(computer.getHand());
+
+            topCard.setColor(chosenColor);
+            game.setEstablishedColor(chosenColor);
+            game.setEstablishedValue("wild");
+            buttonGameColor.setStyle(currentColor());
+            System.out.println("La computadora elige el color: " + chosenColor);
+
+            if (value.equals("wild_draw_4")) {
+                for (int i = 0; i < 4; i++) human.addCard(deck.drawCard());
+                System.out.println("Efecto +4 aplicado al humano.");
+                refreshHumanHand();
+                changeTurn();
+                return;
+            }
+        }
+
+
+    }
 }
