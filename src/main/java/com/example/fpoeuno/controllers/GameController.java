@@ -22,15 +22,24 @@ import java.io.IOException;
 public class GameController {
 
     // ===== FXML COMPONENTES =====
-    @FXML private VBox unoBox;
-    @FXML private AnchorPane colorSelectionBox;
-    @FXML private Button buttonGameColor;
-    @FXML private Label labelNickname;
-    @FXML private ListView<Card> listViewHumanHand;
-    @FXML private ListView<Card> listViewComputerHand;
-    @FXML private ImageView imageViewTopCard;
-    @FXML private ImageView imageViewHumanFlag;
-    @FXML private ImageView imageViewComputerFlag;
+    @FXML
+    private VBox unoBox;
+    @FXML
+    private AnchorPane colorSelectionBox;
+    @FXML
+    private Button buttonGameColor;
+    @FXML
+    private Label labelNickname;
+    @FXML
+    private ListView<Card> listViewHumanHand;
+    @FXML
+    private ListView<Card> listViewComputerHand;
+    @FXML
+    private ImageView imageViewTopCard;
+    @FXML
+    private ImageView imageViewHumanFlag;
+    @FXML
+    private ImageView imageViewComputerFlag;
 
     // ===== MODELOS ======
     private UnoThreadManager unoThreadManager = new UnoThreadManager();
@@ -100,6 +109,7 @@ public class GameController {
     // ===== INICIALIZADORES =====
 
     private void initializeHumanHandView() {
+        unoBox.setVisible(false);
         listViewHumanHand.setOrientation(Orientation.HORIZONTAL);
         listViewHumanHand.setCellFactory(param -> createHumanCardCell());
         listViewHumanHand.getItems().setAll(human.getHand());
@@ -204,7 +214,12 @@ public class GameController {
 
     private void handleHumanCardPlay(Card selectedCard) {
 
-        unoBox.setVisible(false);
+        if(human.getHand().size()==1){
+            System.out.println("Juego terminado,el jugador gana....");
+            AlertHelper.showConfirmationAlert("22","Juego terminado"+" El jugador gana... ¿deseas iniciar una nueva partida?");
+            //  if(true){}
+        }
+
         if (!isHumanTurn()) {
             System.out.println("Es el turno de la máquina, no puedes jugar...");
             return;
@@ -475,7 +490,7 @@ public class GameController {
             }
         };
 
-        cell.setOnMouseClicked(mouseEvent -> handleHumanCardPlay(cell.getItem()));
+        cell.setOnMouseClicked(mouseEvent -> handleHumanCardPlay(cell.getItem()));{}
         return cell;
     }
 
@@ -516,12 +531,53 @@ public class GameController {
         if (human.getHand().size() == 1 && unoThreadManager.isUNOActive()) {
             unoThreadManager.pressUNO();
             System.out.println("¡UNO presionado a tiempo!");
+            unoBox.setVisible(false);
         } else {
             System.out.println("No puedes presionar UNO ahora.");
         }
+
     }
 
+    public void firstCardLogic(Card card) {
+        System.out.println("APLICANDO LA LOGICA DE LA TOP CARD");
+        String value = card.getValue();
+        String color = card.getColor();
+        String currentTurn = game.getCurrentTurn();
+
+        if (value.equals("skip")) {
+            establishGameValues(card);
+            changeTurn();
+            System.out.println("APLICANDO LA LOGICA DE SKIP CARD");
+            return;
+        }
 
 
+        if (value.equals("wild_draw_2")) {
+            Player target = currentTurn.equals("Human") ? computer : human;
+            human.addCard(deck.drawCard());
+            human.addCard(deck.drawCard());
+            refreshHumanHand();
+            System.out.println("Efecto +2 aplicado al jugador: " + target.getNickname());
+            System.out.println("APLICANDO LA LOGICA DE LA WILD+2 CARD");
+        }
+        if (color.equals("wild")) {
+            String chosenColor = chooseComputerColor(computer.getHand());
 
+            topCard.setColor(chosenColor);
+            game.setEstablishedColor(chosenColor);
+            game.setEstablishedValue("wild");
+            buttonGameColor.setStyle(currentColor());
+            System.out.println("La computadora elige el color: " + chosenColor);
+
+            if (value.equals("wild_draw_4")) {
+                for (int i = 0; i < 4; i++) human.addCard(deck.drawCard());
+                System.out.println("Efecto +4 aplicado al humano.");
+                refreshHumanHand();
+                changeTurn();
+                return;
+            }
+        }
+
+
+    }
 }
