@@ -10,11 +10,28 @@ public class GameExceptions {
         }
     }
 
-    // Excepción para cuando un jugador intenta jugar fuera de turno
-    public static class OutOfTurnException extends Exception {
-        public OutOfTurnException(String message) {
+    // InvalidTurnException.java
+    public static class InvalidTurnException extends Exception {
+        public InvalidTurnException(String message) {
             super(message);
         }
     }
 
+    public static class NotYourTurnException extends Exception {
+        public NotYourTurnException(String message) {
+            super(message);
+        }
+    }
+
+    public static class WildColorPendingException extends Exception {
+        public WildColorPendingException(String message) {
+            super(message);
+        }
+    }
+
+    public static class CannotDrawCardException extends Exception {
+        public CannotDrawCardException(String message) {
+            super(message);
+        }
+    }
 }

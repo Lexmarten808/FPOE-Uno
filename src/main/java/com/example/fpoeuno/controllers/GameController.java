@@ -42,6 +42,7 @@ public class GameController {
     private ImageView imageViewComputerFlag;
 
     // ===== MODELOS ======
+
     private UnoThreadManager unoThreadManager = new UnoThreadManager();
     private Game game = new Game();
     private Deck deck = new Deck();
@@ -137,26 +138,30 @@ public class GameController {
 
     @FXML
     void onActionButtonRobar(ActionEvent event) {
-        String text = "";
-        if (Objects.equals(game.getCurrentTurn(), "Human")) {
-            if (pendingWildCard != null) {
-                System.out.println("Primero selecciona un color antes de robar.");
-                return;
+        try {
+            if (!Objects.equals(game.getCurrentTurn(), "Human")) {
+                throw new GameExceptions.NotYourTurnException("Es el turno de la máquina, no puedes robar.");
             }
+
+            if (pendingWildCard != null) {
+                throw new GameExceptions.WildColorPendingException("Primero selecciona un color antes de robar.");
+            }
+
             for (Card card : human.getHand()) {
                 if (isPlayable(card)) {
-                    text = "Puedes jugar una carta, no puedes robar...";
+                    throw new GameExceptions.CannotDrawCardException("Tienes una carta jugable, no puedes robar.");
                 }
             }
-            System.out.println(text);
-            if (text.isEmpty()) { // No tiene cartas para jugar...
-                Card draw = deck.drawCard();
-                human.addCard(draw);
-                changeTurn();
-                refreshHumanHand();
-            }
-        } else {
-            System.out.println("Es el turno de la máquina, no puedes robar...");
+
+            // No hay cartas jugables, se permite robar
+            Card draw = deck.drawCard();
+            human.addCard(draw);
+            changeTurn();
+            refreshHumanHand();
+
+        } catch (GameExceptions.NotYourTurnException | GameExceptions.WildColorPendingException |
+                 GameExceptions.CannotDrawCardException e) {
+            AlertHelper.showErrorAlert("Movimiento inválido", "No puedes robar una carta", e.getMessage());
         }
     }
 
@@ -218,23 +223,26 @@ public class GameController {
 
     private void handleHumanCardPlay(Card selectedCard) {
 
-        if (!isHumanTurn()) {
-            System.out.println("Es el turno de la máquina, no puedes jugar...");
-            return;
-        }
+        try {
+            if (!isHumanTurn()) {
+                throw new GameExceptions.InvalidTurnException("Es el turno de la máquina. No puedes jugar.");
+            }
 
-        if (pendingWildCard != null) {
-            System.out.println("Primero selecciona un color antes de seguir jugando.");
-            return;
-        }
+            if (pendingWildCard != null) {
+                throw new GameExceptions.InvalidCardPlayException("Primero selecciona un color antes de seguir jugando.");
+            }
 
-        if (selectedCard == null) {
-            System.out.println("No es una carta válida.");
-            return;
-        }
+            if (selectedCard == null) {
+                throw new GameExceptions.InvalidCardPlayException("No es una carta válida.");
+            }
 
-        if (!isPlayable(selectedCard)) {
-            System.out.println("Carta no jugable: " + selectedCard);
+            if (!isPlayable(selectedCard)) {
+                throw new GameExceptions.InvalidCardPlayException("Carta no jugable: " + selectedCard);
+            }
+
+        } catch (GameExceptions.InvalidCardPlayException | GameExceptions.InvalidTurnException e) {
+            System.out.println("Error: " + e.getMessage());
+            AlertHelper.showErrorAlert("Movimiento inválido", "No puedes realizar esta acción", e.getMessage());
             return;
         }
 
