@@ -13,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.io.IOException;
 public class GameController {
 
     // ===== FXML COMPONENTES =====
-
+    @FXML private VBox unoBox;
     @FXML private AnchorPane colorSelectionBox;
     @FXML private Button buttonGameColor;
     @FXML private Label labelNickname;
@@ -34,7 +35,7 @@ public class GameController {
     @FXML private ImageView imageViewComputerFlag;
 
     // ===== MODELOS ======
-
+    private UnoThreadManager unoThreadManager = new UnoThreadManager();
     private Game game = new Game();
     private Deck deck = new Deck();
     private Player human;
@@ -175,6 +176,7 @@ public class GameController {
     // ===== LÓGICA DE JUEGO =====
 
     private void handleHumanCardPlay(Card selectedCard) {
+        unoBox.setVisible(false);
         if (!isHumanTurn()) {
             System.out.println("Es el turno de la máquina, no puedes jugar...");
             return;
@@ -194,6 +196,16 @@ public class GameController {
             System.out.println("Carta no jugable: " + selectedCard);
             return;
         }
+        if (human.getHand().size() == 2) {
+            unoBox.setVisible(true);
+            System.out.println("presiona UNO");
+            unoThreadManager.start(human, player -> {
+                System.out.println("No presionó UNO a tiempo. Se penaliza a " + player.getNickname());
+                player.addCard(deck.drawCard());
+                refreshHumanHand();
+                changeTurn();
+            });
+        }
 
         topCard = selectedCard;
         setTopCard(topCard);
@@ -201,6 +213,7 @@ public class GameController {
         human.removeCard(selectedCard);
         deck.discardCard(selectedCard);
         refreshHumanHand();
+
 
         // Solo cambiar turno si no es un comodín
         if (pendingWildCard == null) {
@@ -468,6 +481,16 @@ public class GameController {
             }
         }
         return "red"; // color por defecto si no hay cartas de color
+    }
+
+    @FXML
+    void onActionButtonUno(ActionEvent event) {
+        if (human.getHand().size() == 1 && unoThreadManager.isUNOActive()) {
+            unoThreadManager.pressUNO();
+            System.out.println("¡UNO presionado a tiempo!");
+        } else {
+            System.out.println("No puedes presionar UNO ahora.");
+        }
     }
 
 }
