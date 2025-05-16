@@ -166,7 +166,7 @@ public class GameController {
     }
 
     @FXML
-    void onActionButtonPrint(ActionEvent event) throws IOException {
+    void onActionButtonPrint(ActionEvent event)throws IOException  {
         deck.printDeck();
         System.out.println("***********human hand:");
         human.printHand();
@@ -313,7 +313,13 @@ public class GameController {
     }
 
     private void applyWildColor(String color) {
-        if (pendingWildCard == null) return;
+        //excepciones no marcadas
+        if (pendingWildCard == null) {
+            throw new IllegalStateException("No hay una carta comodín pendiente para aplicar color");
+        }
+        if (color == null || color.isBlank()) {
+            throw new IllegalArgumentException("El color no puede estar vacío");
+        }
 
         System.out.println("Color elegido por el usuario: " + color);
 
