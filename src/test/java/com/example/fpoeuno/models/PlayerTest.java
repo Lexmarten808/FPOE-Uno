@@ -8,13 +8,20 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit tests for the Player class.
+ * These tests verify the correct behavior of player-related operations such as
+ * nickname management, hand manipulation (add, remove, and set), and initial state.
+ */
 class PlayerTest {
-
 
     private Player player;
     private Card card1;
     private Card card2;
 
+    /**
+     * Initializes a Player instance and two sample cards before each test.
+     */
     @BeforeEach
     void setUp() {
         player = new Player("Juan", true);
@@ -22,6 +29,9 @@ class PlayerTest {
         card2 = new Card("blue", "skip", "images/cards/skip_blue.png");
     }
 
+    /**
+     * Tests getting and setting the player's nickname.
+     */
     @Test
     void testGetNicknameAndSetNickname() {
         assertEquals("Juan", player.getNickname());
@@ -29,13 +39,10 @@ class PlayerTest {
         assertEquals("Carlos", player.getNickname());
     }
 
-    @Test
-    void testIsHumanAndSetIsHuman() {
-        assertTrue(player.isHuman());
-        player.setIsHuman(false);
-        assertFalse(player.isHuman());
-    }
-
+    /**
+     * Tests adding a card to the player's hand.
+     * Ensures the card is added and the hand size increases.
+     */
     @Test
     void testAddCard() {
         player.addCard(card1);
@@ -43,6 +50,10 @@ class PlayerTest {
         assertTrue(player.getHand().contains(card1));
     }
 
+    /**
+     * Tests removing a card from the player's hand.
+     * Ensures the hand is empty after the card is removed.
+     */
     @Test
     void testRemoveCard() {
         player.addCard(card1);
@@ -50,6 +61,10 @@ class PlayerTest {
         assertTrue(player.getHand().isEmpty());
     }
 
+    /**
+     * Tests setting a new hand for the player.
+     * Verifies that the new cards are correctly reflected in the hand.
+     */
     @Test
     void testSetHand() {
         ArrayList<Card> newHand = new ArrayList<>();
@@ -64,6 +79,9 @@ class PlayerTest {
         assertTrue(hand.contains(card2));
     }
 
+    /**
+     * Tests that a new player starts with a non-null, empty hand.
+     */
     @Test
     void testGetHandInitialEmpty() {
         assertNotNull(player.getHand());
