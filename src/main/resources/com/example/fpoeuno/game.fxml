@@ -29,7 +29,7 @@
             </ImageView>
          </graphic>
       </Label>
-      <Button layoutX="551.0" layoutY="385.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" />
+      <Button layoutX="551.0" layoutY="385.0" mnemonicParsing="false" onAction="#onActionButtonPrint" text="PRINT" visible="false" />
       <ListView fx:id="listViewComputerHand" layoutX="175.0" layoutY="30.0" prefHeight="120.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);" />
       <ListView fx:id="listViewHumanHand" layoutX="175.0" layoutY="450.0" prefHeight="120.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(to top, #B71C1C, #D32F2F, #FF6659);" />
       <ImageView fx:id="imageViewTopCard" fitHeight="125.0" fitWidth="80.0" layoutX="535.0" layoutY="238.0" pickOnBounds="true" preserveRatio="true">
